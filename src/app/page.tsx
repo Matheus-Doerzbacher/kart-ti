@@ -406,21 +406,6 @@ export default function Page() {
             </Card>
           </div>
         </section>
-        <section className="mt-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-card-foreground">
-              Gerenciar Pilotos
-            </h2>
-            <Button>
-              <a href="/drivers/new">Novo Piloto</a>
-            </Button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader />
-            </Card>
-          </div>
-        </section>
       </main>
     </div>
   )

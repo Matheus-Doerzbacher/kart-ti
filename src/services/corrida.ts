@@ -6,53 +6,65 @@ import {
   doc,
   getDoc,
   getDocs,
+  query,
   updateDoc,
+  where,
 } from 'firebase/firestore'
 
-import { Pista } from './pista'
-import { Resultado } from './resultado'
-
 export type Corrida = {
-  pista: Pista
+  id: string
+  idPista: string
+  idTemporada: string
   data: Date
-  resultadoCorrida: Resultado
-  resultadoQuali: Resultado
 }
 
-// Buscar todas as corridas
-export const getCorridas = async (): Promise<Corrida[]> => {
-  const corridaCollection = collection(db, 'corridas')
+const nameCollection = 'corrida'
+
+export const getAllCorrida = async (): Promise<Corrida[]> => {
+  const corridaCollection = collection(db, nameCollection)
   const corridaSnapshot = await getDocs(corridaCollection)
   const corridas = corridaSnapshot.docs.map((doc) => doc.data() as Corrida)
   return corridas
 }
 
-// Buscar uma corrida
+export const getCorridasPorTemporada = async (
+  idTemporada: string,
+): Promise<Corrida[]> => {
+  const corridaCollection = collection(db, nameCollection)
+  const q = query(corridaCollection, where('idTemporada', '==', idTemporada))
+  const corridaSnapshot = await getDocs(q)
+  const corridas = corridaSnapshot.docs.map(
+    (doc) =>
+      ({
+        ...doc.data(),
+        id: doc.id,
+      }) as Corrida,
+  )
+  return corridas
+}
+
 export const getCorrida = async (id: string): Promise<Corrida> => {
-  const corridaDoc = doc(db, 'corridas', id)
+  const corridaDoc = doc(db, nameCollection, id)
   const corridaSnapshot = await getDoc(corridaDoc)
   return corridaSnapshot.data() as Corrida
 }
 
-// Adicionar nova corrida
 export const addCorrida = async (
   corrida: Omit<Corrida, 'id'>,
 ): Promise<void> => {
-  const corridaCollection = collection(db, 'corridas')
+  const corridaCollection = collection(db, nameCollection)
   await addDoc(corridaCollection, corrida)
 }
 
-// Atualizar corrida
 export const updateCorrida = async (
   id: string,
   corrida: Partial<Corrida>,
 ): Promise<void> => {
-  const corridaDoc = doc(db, 'corridas', id)
+  const corridaDoc = doc(db, nameCollection, id)
   await updateDoc(corridaDoc, corrida)
 }
 
-// Deletar corrida
 export const deleteCorrida = async (id: string): Promise<void> => {
-  const corridaDoc = doc(db, 'corridas', id)
+  const corridaDoc = doc(db, nameCollection, id)
   await deleteDoc(corridaDoc)
 }

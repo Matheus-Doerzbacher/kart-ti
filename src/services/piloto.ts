@@ -15,38 +15,35 @@ export type Piloto = {
   urlImage: string
 }
 
-// Buscar todos os pilotos
-export const getPilotos = async (): Promise<Piloto[]> => {
-  const pilotoCollection = collection(db, 'pilotos')
+const nameCollection = 'piloto'
+
+export const getAllPiloto = async (): Promise<Piloto[]> => {
+  const pilotoCollection = collection(db, nameCollection)
   const pilotoSnapshot = await getDocs(pilotoCollection)
   const pilotos = pilotoSnapshot.docs.map((doc) => doc.data() as Piloto)
   return pilotos
 }
 
-// Buscar um piloto
 export const getPiloto = async (id: string): Promise<Piloto> => {
-  const pilotoDoc = doc(db, 'pilotos', id)
+  const pilotoDoc = doc(db, nameCollection, id)
   const pilotoSnapshot = await getDoc(pilotoDoc)
   return pilotoSnapshot.data() as Piloto
 }
 
-// Adicionar novo piloto
 export const addPiloto = async (piloto: Omit<Piloto, 'id'>): Promise<void> => {
-  const pilotoCollection = collection(db, 'pilotos')
+  const pilotoCollection = collection(db, nameCollection)
   await addDoc(pilotoCollection, piloto)
 }
 
-// Atualizar piloto
 export const updatePiloto = async (
   id: string,
   piloto: Partial<Piloto>,
 ): Promise<void> => {
-  const pilotoDoc = doc(db, 'pilotos', id)
+  const pilotoDoc = doc(db, nameCollection, id)
   await updateDoc(pilotoDoc, piloto)
 }
 
-// Deletar piloto
 export const deletePiloto = async (id: string): Promise<void> => {
-  const pilotoDoc = doc(db, 'pilotos', id)
+  const pilotoDoc = doc(db, nameCollection, id)
   await deleteDoc(pilotoDoc)
 }

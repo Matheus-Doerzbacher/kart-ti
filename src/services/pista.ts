@@ -15,39 +15,35 @@ export type Pista = {
   local: string
   urlImage: string
 }
+const nameCollection = 'pista'
 
-// Buscar todas as pistas
-export const getPistas = async (): Promise<Pista[]> => {
-  const pistaCollection = collection(db, 'pistas')
+export const getAllPista = async (): Promise<Pista[]> => {
+  const pistaCollection = collection(db, nameCollection)
   const pistaSnapshot = await getDocs(pistaCollection)
   const pistas = pistaSnapshot.docs.map((doc) => doc.data() as Pista)
   return pistas
 }
 
-// Buscar uma pista
 export const getPista = async (id: string): Promise<Pista> => {
-  const pistaDoc = doc(db, 'pistas', id)
+  const pistaDoc = doc(db, nameCollection, id)
   const pistaSnapshot = await getDoc(pistaDoc)
   return pistaSnapshot.data() as Pista
 }
 
-// Adicionar nova pista
 export const addPista = async (pista: Omit<Pista, 'id'>): Promise<void> => {
-  const pistaCollection = collection(db, 'pistas')
+  const pistaCollection = collection(db, nameCollection)
   await addDoc(pistaCollection, pista)
 }
 
-// Atualizar pista
 export const updatePista = async (
   id: string,
   pista: Partial<Pista>,
 ): Promise<void> => {
-  const pistaDoc = doc(db, 'pistas', id)
+  const pistaDoc = doc(db, nameCollection, id)
   await updateDoc(pistaDoc, pista)
 }
 
-// Deletar pista
 export const deletePista = async (id: string): Promise<void> => {
-  const pistaDoc = doc(db, 'pistas', id)
+  const pistaDoc = doc(db, nameCollection, id)
   await deleteDoc(pistaDoc)
 }
