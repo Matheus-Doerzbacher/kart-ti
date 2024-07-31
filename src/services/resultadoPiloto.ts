@@ -22,6 +22,8 @@ export type ResultadoPiloto = {
   velocidadeMedia: number
   numeroKart: number
   pontos: number
+  posicaoQualificacao: number
+  tempoQualificacao: Date
 }
 
 const nameCollection = 'resultadoPiloto'

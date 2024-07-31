@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="pt-br">
       <body
         className={cn(
-          'min-h-screen bg-background font-sans antialiased',
+          'className="flex flex-col w-full min-h-screen bg-background font-sans antialiased',
           fontSans.variable,
         )}
       >
