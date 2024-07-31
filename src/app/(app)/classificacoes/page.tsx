@@ -1,4 +1,4 @@
-import { temporadaPilotoMock } from '@/mock/temporadaPiloto'
+import { temporadaPilotoMock } from '@/mock/temporadaPilotoMock'
 import { CardPiloto } from './_components/card_pilotos'
 
 export default function Page() {

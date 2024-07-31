@@ -8,22 +8,24 @@ import {
   getDocs,
   updateDoc,
 } from 'firebase/firestore'
+import { Piloto } from './piloto'
+import { Corrida } from './corrida'
 
 export type ResultadoPiloto = {
   id: string
-  idPiloto: string
-  idCorrida: string
+  piloto: Piloto
+  corrida: Corrida
   posicao: number
-  melhorVolta: Date
+  melhorVolta: string
   numeroDaMelhorVolta: number
-  tempoDoPilotoDaFrente: Date | number
-  tempoDoPilotoLider: Date | number
+  tempoDoPilotoDaFrente: string | number
+  tempoDoPilotoLider: string | number
   totalDeVoltas: number
   velocidadeMedia: number
   numeroKart: number
   pontos: number
   posicaoQualificacao: number
-  tempoQualificacao: Date
+  tempoQualificacao: string
 }
 
 const nameCollection = 'resultadoPiloto'

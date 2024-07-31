@@ -10,12 +10,18 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore'
+import { Pista } from './pista'
+import { Temporada } from './temporada'
+import { Piloto } from './piloto'
 
 export type Corrida = {
   id: string
-  idPista: string
-  idTemporada: string
+  pista: Pista
+  temporada: Temporada
   data: Date
+  voltas: number
+  tempo: string
+  ganhador?: Piloto
 }
 
 const nameCollection = 'corrida'

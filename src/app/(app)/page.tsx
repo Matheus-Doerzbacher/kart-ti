@@ -15,7 +15,7 @@ import {
   TableCell,
 } from '@/components/ui/table'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import { temporadaPilotoMock } from '@/mock/temporadaPiloto'
+import { temporadaPilotoMock } from '@/mock/temporadaPilotoMock'
 import { TableRowPiloto } from './_components/table_row_piloto'
 
 export default function Page() {
