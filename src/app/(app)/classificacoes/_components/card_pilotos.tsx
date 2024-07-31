@@ -10,7 +10,7 @@ export const CardPiloto = ({
   posicao: number
 }) => {
   return (
-    <Card className="flex flex-col items-center p-4">
+    <Card className="flex flex-col items-center p-4 hover:border-2 hover:border-primary">
       <div className="flex justify-between w-full">
         <div>
           <h2 className="text-2xl font-bold">{posicao}</h2>

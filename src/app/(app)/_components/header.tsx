@@ -32,7 +32,9 @@ export function HeaderCustom() {
   return (
     <header className="bg-card py-4 px-6 shadow flex items-center h-20">
       <nav className="flex items-center justify-between w-full">
-        <HeaderLink href="/">Gerenciador de Corridas de Kart</HeaderLink>
+        <Link className="text-2xl font-bold text-primary" href="/">
+          Gerenciador de Corridas de Kart
+        </Link>
         <div className="flex items-center gap-4">
           <HeaderLink
             href="/corridas"

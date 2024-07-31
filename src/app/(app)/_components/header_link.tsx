@@ -17,8 +17,7 @@ export const HeaderLink = ({
       href={href}
       className={cn(
         'text-card-foreground hover:text-card-foreground/50',
-        isActive &&
-          'bg-card-foreground/50 rounded-lg px-3 py-2 text-background',
+        isActive && 'rounded-lg px-3 py-2 border-2 border-primary',
       )}
       prefetch={prefetch}
     >
