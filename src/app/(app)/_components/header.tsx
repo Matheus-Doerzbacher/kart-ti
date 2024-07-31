@@ -5,15 +5,25 @@ import { Button } from '@/components/ui/button'
 import { HeaderLink } from './header_link'
 import { usePathname } from 'next/navigation'
 import { useUserSession } from '@/context/user_session_context'
+import Link from 'next/link'
 
 export function HeaderCustom() {
   const { userSession, setUserSession } = useUserSession()
   const pathname = usePathname()
-  const [isClient, setIsClient] = useState(false)
+
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    setIsClient(true)
+    setIsLoading(false)
   }, [])
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-20 border-b shadow-sm">
+        Carregando...
+      </div>
+    )
+  }
 
   const isActive = (name: string) => {
     return pathname.includes(name)
@@ -22,35 +32,8 @@ export function HeaderCustom() {
   return (
     <header className="bg-card py-4 px-6 shadow flex items-center h-20">
       <nav className="flex items-center justify-between w-full">
-        <HeaderLink href="#">Gerenciador de Corridas de Kart</HeaderLink>
+        <HeaderLink href="/">Gerenciador de Corridas de Kart</HeaderLink>
         <div className="flex items-center gap-4">
-          {isClient && userSession !== undefined && (
-            <>
-              {userSession ? (
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setUserSession(null)
-                  }}
-                >
-                  Sair
-                </Button>
-              ) : (
-                <HeaderLink href="/login" prefetch={false}>
-                  Login
-                </HeaderLink>
-              )}
-              {userSession && (
-                <HeaderLink
-                  href="/admin"
-                  prefetch={false}
-                  isActive={isActive('admin')}
-                >
-                  Admin
-                </HeaderLink>
-              )}
-            </>
-          )}
           <HeaderLink
             href="/corridas"
             prefetch={false}
@@ -79,9 +62,22 @@ export function HeaderCustom() {
           >
             Pilotos
           </HeaderLink>
-          <Button>
-            <a href="/new-race">Nova Corrida</a>
-          </Button>
+          {userSession ? (
+            <Button
+              variant="outline"
+              onClick={() => {
+                setUserSession(null)
+              }}
+            >
+              Sair
+            </Button>
+          ) : (
+            <Button>
+              <Link href="/login" prefetch={false}>
+                Login
+              </Link>
+            </Button>
+          )}
         </div>
       </nav>
     </header>
