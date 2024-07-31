@@ -41,7 +41,7 @@ export function HeaderCustom() {
             prefetch={false}
             isActive={isActive('corridas')}
           >
-            Corridas
+            Corridas / Pilotos
           </HeaderLink>
           <HeaderLink
             href="/classificacoes"

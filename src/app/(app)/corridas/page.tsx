@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import PageCorridas from './(corridas)/page_corridas'
+import PageCorridas from './_components/page_corridas'
 import {
   Select,
   SelectContent,
@@ -9,7 +9,9 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { temporadaPilotoMock } from '@/mock/temporadaPilotoMock'
-import PageCorridaDetail from './(corridas)/page_corrida_detail'
+import PageCorridaDetail from './_components/page_corrida_detail'
+import PagePilotosRanking from './_components/page_pilotos_ranking'
+import PagePilotoDetail from './_components/page_piloto_detail'
 
 export default function Page() {
   // const { userSession, setUserSession } = useUserSession()
@@ -56,6 +58,8 @@ export default function Page() {
             setSelectedOption(value)
             if (value === 'corridas') {
               setSelectedItem('todas')
+            } else if (value === 'pilotos') {
+              setSelectedItem('todos')
             } else {
               setSelectedItem('')
             }
@@ -100,11 +104,14 @@ export default function Page() {
                 )}
               </>
             ) : (
-              temporadaPilotoMock.map((piloto) => (
-                <SelectItem key={piloto.id} value={piloto.id}>
-                  {piloto.piloto.nome}
-                </SelectItem>
-              ))
+              <>
+                <SelectItem value="todos">Todos</SelectItem>
+                {temporadaPilotoMock.map((piloto) => (
+                  <SelectItem key={piloto.id} value={piloto.id}>
+                    {piloto.piloto.nome}
+                  </SelectItem>
+                ))}
+              </>
             )}
           </SelectContent>
         </Select>
@@ -113,6 +120,11 @@ export default function Page() {
         <PageCorridas />
       ) : selectedOption === 'corridas' ? (
         <PageCorridaDetail />
+      ) : null}
+      {selectedOption === 'pilotos' && selectedItem === 'todos' ? (
+        <PagePilotosRanking />
+      ) : selectedOption === 'pilotos' ? (
+        <PagePilotoDetail />
       ) : null}
     </main>
   )
