@@ -10,11 +10,13 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore'
+import { Piloto } from './piloto'
+import { Temporada } from './temporada'
 
 export type TemporadaPiloto = {
   id: string
-  idPiloto: string
-  idTemporada: string
+  piloto: Piloto
+  temporada: Temporada
   pontos: number
   vitorias: number
 }

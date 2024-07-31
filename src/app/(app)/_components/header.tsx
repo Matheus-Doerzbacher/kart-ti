@@ -55,13 +55,6 @@ export function HeaderCustom() {
           >
             Pistas
           </HeaderLink>
-          <HeaderLink
-            href="/pilotos"
-            prefetch={false}
-            isActive={isActive('pilotos')}
-          >
-            Pilotos
-          </HeaderLink>
           {userSession ? (
             <Button
               variant="outline"

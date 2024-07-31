@@ -19,10 +19,10 @@ export default function RootLayout({
 }>) {
   return (
     <UserSessionProvider>
-      <html lang="pt-br">
+      <html lang="pt-br" style={{ scrollbarWidth: 'none' }}>
         <body
           className={cn(
-            'className="flex flex-col w-full min-h-screen bg-background font-sans antialiased',
+            'flex flex-col w-full min-h-screen bg-background font-sans antialiased',
             fontSans.variable,
           )}
         >

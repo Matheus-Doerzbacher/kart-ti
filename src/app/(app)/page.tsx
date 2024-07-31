@@ -15,6 +15,8 @@ import {
   TableCell,
 } from '@/components/ui/table'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { temporadaPilotoMock } from '@/mock/temporadaPiloto'
+import { TableRowPiloto } from './_components/table_row_piloto'
 
 export default function Page() {
   return (
@@ -197,14 +199,14 @@ export default function Page() {
             Classificação de Pilotos
           </h2>
           <Link
-            href="#"
+            href="/classificacoes"
             className="text-primary hover:text-primary-hover"
             prefetch={false}
           >
             Ver Todas
           </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
               <CardTitle>Classificação Geral</CardTitle>
@@ -215,43 +217,21 @@ export default function Page() {
                   <TableRow>
                     <TableHead>Pos</TableHead>
                     <TableHead>Piloto</TableHead>
-                    <TableHead>Pontos</TableHead>
+                    <TableHead className="text-center">Pontos</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
-                    <TableCell>1</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>JS</AvatarFallback>
-                      </Avatar>
-                      João da Silva
-                    </TableCell>
-                    <TableCell>120</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>2</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>MO</AvatarFallback>
-                      </Avatar>
-                      Maria Oliveira
-                    </TableCell>
-                    <TableCell>100</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>3</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>PA</AvatarFallback>
-                      </Avatar>
-                      Pedro Almeida
-                    </TableCell>
-                    <TableCell>90</TableCell>
-                  </TableRow>
+                  {temporadaPilotoMock
+                    .sort((a, b) => b.pontos - a.pontos)
+                    .slice(0, 3)
+                    .map((piloto, index) => (
+                      <TableRowPiloto
+                        key={piloto.id}
+                        piloto={piloto}
+                        tipo="pontos"
+                        index={index}
+                      />
+                    ))}
                 </TableBody>
               </Table>
             </CardContent>
@@ -266,94 +246,21 @@ export default function Page() {
                   <TableRow>
                     <TableHead>Pos</TableHead>
                     <TableHead>Piloto</TableHead>
-                    <TableHead>Vitórias</TableHead>
+                    <TableHead className="text-center">Vitórias</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
-                    <TableCell>1</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>JS</AvatarFallback>
-                      </Avatar>
-                      João da Silva
-                    </TableCell>
-                    <TableCell>4</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>2</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>MO</AvatarFallback>
-                      </Avatar>
-                      Maria Oliveira
-                    </TableCell>
-                    <TableCell>3</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>3</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>PA</AvatarFallback>
-                      </Avatar>
-                      Pedro Almeida
-                    </TableCell>
-                    <TableCell>2</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Voltas Mais Rápidas</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Pos</TableHead>
-                    <TableHead>Piloto</TableHead>
-                    <TableHead>Volta Mais Rápida</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>1</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>MO</AvatarFallback>
-                      </Avatar>
-                      Maria Oliveira
-                    </TableCell>
-                    <TableCell>1:21.789</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>2</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>PA</AvatarFallback>
-                      </Avatar>
-                      Pedro Almeida
-                    </TableCell>
-                    <TableCell>1:22.012</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>3</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>JS</AvatarFallback>
-                      </Avatar>
-                      João da Silva
-                    </TableCell>
-                    <TableCell>1:22.456</TableCell>
-                  </TableRow>
+                  {temporadaPilotoMock
+                    .sort((a, b) => b.vitorias - a.vitorias)
+                    .slice(0, 3)
+                    .map((piloto, index) => (
+                      <TableRowPiloto
+                        key={piloto.id}
+                        piloto={piloto}
+                        tipo="vitorias"
+                        index={index}
+                      />
+                    ))}
                 </TableBody>
               </Table>
             </CardContent>
