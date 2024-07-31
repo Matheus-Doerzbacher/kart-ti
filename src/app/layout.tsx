@@ -3,6 +3,7 @@ import { Inter as FontSans } from 'next/font/google'
 import './globals.css'
 
 import { cn } from '@/lib/utils'
+import { UserSessionProvider } from '@/context/user_session_context'
 
 const fontSans = FontSans({ subsets: ['latin'], variable: '--font-sans' })
 
@@ -17,15 +18,17 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-br">
-      <body
-        className={cn(
-          'className="flex flex-col w-full min-h-screen bg-background font-sans antialiased',
-          fontSans.variable,
-        )}
-      >
-        {children}
-      </body>
-    </html>
+    <UserSessionProvider>
+      <html lang="pt-br">
+        <body
+          className={cn(
+            'className="flex flex-col w-full min-h-screen bg-background font-sans antialiased',
+            fontSans.variable,
+          )}
+        >
+          {children}
+        </body>
+      </html>
+    </UserSessionProvider>
   )
 }

@@ -1,20 +1,49 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/mPWRzcCFNrb
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
+'use client'
+
 import Link from 'next/link'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { UserSession, useUserSession } from '@/context/user_session_context'
+import { useRouter } from 'next/navigation'
 
 export default function Page() {
+  const { userSession, setUserSession } = useUserSession()
+  const router = useRouter()
+
+  const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const form = event.currentTarget
+    const username = (form.elements.namedItem('username') as HTMLInputElement)
+      .value
+    const password = (form.elements.namedItem('password') as HTMLInputElement)
+      .value
+
+    if (
+      username === process.env.NEXT_PUBLIC_USERNAME_LOGIN &&
+      password === process.env.NEXT_PUBLIC_PASSWORD_LOGIN
+    ) {
+      if (process.env.NEXT_PUBLIC_NAME_ADMIN) {
+        const sessionData: UserSession = {
+          username: process.env.NEXT_PUBLIC_NAME_ADMIN,
+        }
+        setUserSession(sessionData)
+        router.replace('/')
+      }
+    } else {
+      alert('Usuário ou senha inválidos')
+    }
+  }
+
   return (
     <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-md space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-foreground">
             Faça login
+          </h2>
+          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-foreground">
+            {userSession?.username}
           </h2>
           <p className="mt-2 text-center text-sm text-muted-foreground">
             Ou{' '}
@@ -27,7 +56,12 @@ export default function Page() {
             </Link>
           </p>
         </div>
-        <form className="space-y-6" action="#" method="POST">
+        <form
+          className="space-y-6"
+          action="#"
+          method="POST"
+          onSubmit={handleLogin}
+        >
           <div>
             <Label
               htmlFor="username"
