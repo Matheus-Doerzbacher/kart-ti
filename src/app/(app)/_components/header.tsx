@@ -36,6 +36,15 @@ export function HeaderCustom() {
           Gerenciador de Corridas de Kart
         </Link>
         <div className="flex items-center gap-4">
+          {userSession && (
+            <HeaderLink
+              href="/admin/temporada"
+              prefetch={false}
+              isActive={isActive('admin')}
+            >
+              Admin
+            </HeaderLink>
+          )}
           <HeaderLink
             href="/corridas"
             prefetch={false}

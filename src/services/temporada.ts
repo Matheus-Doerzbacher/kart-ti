@@ -46,16 +46,6 @@ export const getTemporadaAtual = async (): Promise<Temporada> => {
   return temporadaSnapshot.docs[0].data() as Temporada
 }
 
-export const alterarTemporadaAtual = async (id: string): Promise<void> => {
-  const temporada = await getTemporada(id)
-
-  const temporadaAtualizada = {
-    ...temporada,
-    atual: !temporada.atual,
-  }
-  await updateTemporada(temporada.id, temporadaAtualizada)
-}
-
 export const addTemporada = async (
   temporada: Omit<Temporada, 'id'>,
 ): Promise<void> => {

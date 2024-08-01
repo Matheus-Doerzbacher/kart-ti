@@ -4,6 +4,7 @@ import './globals.css'
 
 import { cn } from '@/lib/utils'
 import { UserSessionProvider } from '@/context/user_session_context'
+import { Toaster } from '@/components/ui/toaster'
 
 const fontSans = FontSans({ subsets: ['latin'], variable: '--font-sans' })
 
@@ -27,6 +28,7 @@ export default function RootLayout({
           )}
         >
           {children}
+          <Toaster />
         </body>
       </html>
     </UserSessionProvider>
