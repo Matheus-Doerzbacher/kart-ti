@@ -32,14 +32,20 @@ export const getPista = async (id: string): Promise<Pista> => {
 
 export const addPista = async (pista: Omit<Pista, 'id'>): Promise<void> => {
   const pistaCollection = collection(db, nameCollection)
-  await addDoc(pistaCollection, pista)
+  const DocRef = await addDoc(pistaCollection, pista)
+
+  const novaPista = {
+    id: DocRef.id,
+    nome: pista.nome,
+    local: pista.local,
+    urlImage: pista.urlImage,
+  }
+
+  await updatePista(novaPista)
 }
 
-export const updatePista = async (
-  id: string,
-  pista: Partial<Pista>,
-): Promise<void> => {
-  const pistaDoc = doc(db, nameCollection, id)
+export const updatePista = async (pista: Pista): Promise<void> => {
+  const pistaDoc = doc(db, nameCollection, pista.id)
   await updateDoc(pistaDoc, pista)
 }
 
