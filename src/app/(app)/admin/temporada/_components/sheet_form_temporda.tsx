@@ -11,7 +11,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { addTemporada, Temporada, updateTemporada } from '@/services/temporada'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import {
   Form,
   FormControl,
@@ -38,7 +38,7 @@ const formSchema = z.object({
   atual: z.boolean().optional(),
 })
 
-export const SheetForm = ({
+export const SheetFormTemporada = ({
   children,
   open,
   onOpenChange,
@@ -67,6 +67,22 @@ export const SheetForm = ({
         }
       : {},
   })
+
+  useEffect(() => {
+    if (defaultValue) {
+      form.reset({
+        nome: defaultValue.nome,
+        ano: defaultValue.ano,
+        atual: defaultValue.atual,
+      })
+    } else {
+      form.reset({
+        nome: '',
+        ano: 0,
+        atual: false,
+      })
+    }
+  }, [defaultValue, form])
 
   const onSubmit = form.handleSubmit(async (data) => {
     try {

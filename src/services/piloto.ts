@@ -32,14 +32,20 @@ export const getPiloto = async (id: string): Promise<Piloto> => {
 
 export const addPiloto = async (piloto: Omit<Piloto, 'id'>): Promise<void> => {
   const pilotoCollection = collection(db, nameCollection)
-  await addDoc(pilotoCollection, piloto)
+
+  const docRef = await addDoc(pilotoCollection, piloto)
+
+  const novoPiloto = {
+    id: docRef.id,
+    nome: piloto.nome,
+    urlImage: piloto.urlImage,
+  }
+
+  await updatePiloto(novoPiloto)
 }
 
-export const updatePiloto = async (
-  id: string,
-  piloto: Partial<Piloto>,
-): Promise<void> => {
-  const pilotoDoc = doc(db, nameCollection, id)
+export const updatePiloto = async (piloto: Piloto): Promise<void> => {
+  const pilotoDoc = doc(db, nameCollection, piloto.id)
   await updateDoc(pilotoDoc, piloto)
 }
 

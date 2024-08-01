@@ -11,7 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Edit, Trash2 } from 'lucide-react'
-import { SheetForm } from './_components/sheet_form'
+import { SheetFormTemporada } from './_components/sheet_form_temporda'
 import {
   deleteTemporada,
   getAllTemporada,
@@ -22,6 +22,9 @@ import { toast } from '@/components/ui/use-toast'
 export default function Page() {
   const [sheetOpen, setSheetOpen] = useState(false)
   const [temporadas, setTemporadas] = useState<Temporada[]>([])
+  const [temporadaToEdit, setTemporadaToEdit] = useState<Temporada | undefined>(
+    undefined,
+  )
 
   const buscarTemporadas = async () => {
     const data = await getAllTemporada()
@@ -36,13 +39,16 @@ export default function Page() {
     <div className="flex-1 max-w-4xl w-full mx-auto">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold mb-4">Temporadas</h1>
-        <SheetForm
+        <SheetFormTemporada
           open={sheetOpen}
           onOpenChange={setSheetOpen}
           atualizarLista={buscarTemporadas}
+          defaultValue={temporadaToEdit}
         >
-          <Button>Adicionar Temporada</Button>
-        </SheetForm>
+          <Button onClick={() => setTemporadaToEdit(undefined)}>
+            Adicionar Temporada
+          </Button>
+        </SheetFormTemporada>
       </div>
       <Table>
         <TableHeader>
@@ -71,16 +77,19 @@ export default function Page() {
                     {temporada.atual ? 'Sim' : 'Não'}
                   </TableCell>
                   <TableCell className="flex gap-2 justify-end">
-                    <SheetForm
+                    <SheetFormTemporada
                       open={sheetOpen}
                       onOpenChange={setSheetOpen}
-                      defaultValue={temporada}
+                      defaultValue={temporadaToEdit}
                       atualizarLista={buscarTemporadas}
                     >
-                      <Button variant="outline">
+                      <Button
+                        variant="outline"
+                        onClick={() => setTemporadaToEdit(temporada)}
+                      >
                         <Edit className="w-4 h-4" />
                       </Button>
-                    </SheetForm>
+                    </SheetFormTemporada>
                     <Button
                       variant="outline"
                       onClick={() => {
