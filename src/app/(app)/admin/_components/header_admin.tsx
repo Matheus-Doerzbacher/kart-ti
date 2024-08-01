@@ -43,11 +43,11 @@ export function HeaderAdmin() {
         Piloto
       </HeaderLink>
       <HeaderLink
-        href="/admin/temporada_piloto"
+        href="/admin/corrida"
         prefetch={false}
-        isActive={isActive('temporada_piloto')}
+        isActive={isActive('corrida')}
       >
-        Temporada Piloto
+        Corrida
       </HeaderLink>
       <HeaderLink
         href="/admin/pista"

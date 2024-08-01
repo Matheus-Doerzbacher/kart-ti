@@ -14,6 +14,7 @@ import { Edit, Trash2 } from 'lucide-react'
 import { SheetFormPiloto } from './_components/sheet_form_piloto'
 import { toast } from '@/components/ui/use-toast'
 import { deletePiloto, getAllPiloto, Piloto } from '@/services/piloto'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 export default function Page() {
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -63,7 +64,15 @@ export default function Page() {
               .sort((a, b) => b.nome.localeCompare(a.nome))
               .map((piloto) => (
                 <TableRow key={piloto.id}>
-                  <TableCell>{piloto.nome}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Avatar className="w-10 h-10">
+                        <AvatarImage src={piloto.urlImage} />
+                        <AvatarFallback>{piloto.nome.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      {piloto.nome}
+                    </div>
+                  </TableCell>
                   <TableCell className="flex gap-2 justify-end">
                     <SheetFormPiloto
                       open={sheetOpen}
