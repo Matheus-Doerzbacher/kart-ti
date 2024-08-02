@@ -10,18 +10,15 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore'
-import { Pista } from './pista'
-import { Temporada } from './temporada'
-import { Piloto } from './piloto'
 
 export type Corrida = {
   id: string
-  pista: Pista
-  temporada: Temporada
+  idPista: string
+  idTemporada: string
   data: Date
   voltas: number
   tempo: string
-  ganhador?: Piloto
+  idPiloto?: string
 }
 
 const nameCollection = 'corrida'
@@ -59,14 +56,18 @@ export const addCorrida = async (
   corrida: Omit<Corrida, 'id'>,
 ): Promise<void> => {
   const corridaCollection = collection(db, nameCollection)
-  await addDoc(corridaCollection, corrida)
+  const docRef = await addDoc(corridaCollection, corrida)
+
+  const novaCorrida: Corrida = {
+    id: docRef.id,
+    ...corrida,
+  }
+
+  await updateCorrida(novaCorrida)
 }
 
-export const updateCorrida = async (
-  id: string,
-  corrida: Partial<Corrida>,
-): Promise<void> => {
-  const corridaDoc = doc(db, nameCollection, id)
+export const updateCorrida = async (corrida: Corrida): Promise<void> => {
+  const corridaDoc = doc(db, nameCollection, corrida.id)
   await updateDoc(corridaDoc, corrida)
 }
 
