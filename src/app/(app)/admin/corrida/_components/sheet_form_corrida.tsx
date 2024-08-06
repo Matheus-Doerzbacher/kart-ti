@@ -25,22 +25,23 @@ import { toast } from '@/components/ui/use-toast'
 import { addCorrida, Corrida, updateCorrida } from '@/services/corrida'
 import { getAllPista, Pista } from '@/services/pista'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { getAllTemporada, Temporada } from '@/services/temporada'
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
-import { CaretSortIcon } from '@radix-ui/react-icons'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command'
-import { CheckIcon } from 'lucide-react'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { format } from 'date-fns'
+import { CalendarIcon } from 'lucide-react'
+import { Calendar } from '@/components/ui/calendar'
+import { Timestamp } from 'firebase/firestore'
 
 const formSchema = z.object({
   idPista: z.string({
@@ -49,7 +50,7 @@ const formSchema = z.object({
   idTemporada: z.string({
     required_error: 'Selecione a temporada',
   }),
-  data: z.date({
+  data: z.string({
     required_error: 'Selecione a data da corrida',
   }),
   voltas: z.number({
@@ -76,12 +77,8 @@ export const SheetFormCorrida = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null)
   const [pistas, setPistas] = useState<Pista[]>([])
-  // const [temporadas, setTemporadas] = useState<Temporada[]>([])
+  const [temporadas, setTemporadas] = useState<Temporada[]>([])
   // const [pilotos, setPilotos] = useState<Piloto[]>([])
-
-  const [openPistas, setOpenPistas] = useState<boolean>(false)
-  // const [openTemporadas, setOpenTemporadas] = useState<boolean>(false)
-  // const [openPilotos, setOpenPilotos] = useState<boolean>(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -89,7 +86,10 @@ export const SheetFormCorrida = ({
       ? {
           idPista: defaultValue.idPista,
           idTemporada: defaultValue.idTemporada,
-          data: defaultValue.data,
+          data:
+            defaultValue.data instanceof Timestamp
+              ? format(defaultValue.data.toDate(), 'yyyy-MM-dd')
+              : format(new Date(defaultValue.data), 'yyyy-MM-dd'),
           voltas: defaultValue.voltas,
           tempo: defaultValue.tempo,
           idPiloto: defaultValue.idPiloto,
@@ -102,7 +102,10 @@ export const SheetFormCorrida = ({
       form.reset({
         idPista: defaultValue.idPista,
         idTemporada: defaultValue.idTemporada,
-        data: defaultValue.data,
+        data:
+          defaultValue.data instanceof Timestamp
+            ? format(defaultValue.data.toDate(), 'yyyy-MM-dd')
+            : format(new Date(defaultValue.data), 'yyyy-MM-dd'),
         voltas: defaultValue.voltas,
         tempo: defaultValue.tempo,
         idPiloto: defaultValue.idPiloto,
@@ -111,21 +114,21 @@ export const SheetFormCorrida = ({
       form.reset({
         idPista: '',
         idTemporada: '',
-        data: new Date(),
+        data: format(new Date(), 'yyyy-MM-dd'),
         voltas: 0,
         tempo: '',
-        idPiloto: undefined,
+        idPiloto: '',
       })
     }
   }, [defaultValue, form])
 
   useEffect(() => {
     const updateDatasSelect = async () => {
-      // const dataTemporadas = await getAllTemporada()
+      const dataTemporadas = await getAllTemporada()
       // const dataPilotos = await getAllPiloto()
       const dataPistas = await getAllPista()
 
-      // setTemporadas(dataTemporadas)
+      setTemporadas(dataTemporadas)
       // setPilotos(dataPilotos)
       setPistas(dataPistas)
     }
@@ -139,7 +142,7 @@ export const SheetFormCorrida = ({
         id: defaultValue?.id || '',
         idPista: data.idPista,
         idTemporada: data.idTemporada,
-        data: data.data,
+        data: Timestamp.fromDate(new Date(data.data)),
         voltas: data.voltas,
         tempo: data.tempo,
         idPiloto: data.idPiloto,
@@ -164,7 +167,7 @@ export const SheetFormCorrida = ({
         title: 'Erro ao adicionar Corrida',
         description: 'Ocorreu um erro inesperado',
       })
-      console.log(error)
+      console.error(error)
     }
   })
 
@@ -185,77 +188,101 @@ export const SheetFormCorrida = ({
               control={form.control}
               name="idPista"
               render={({ field }) => (
+                // SELECIONE A PISTA
                 <FormItem>
-                  <FormLabel>Nome</FormLabel>
-                  <Popover open={openPistas} onOpenChange={setOpenPistas}>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          aria-expanded={openPistas}
-                          className={cn(
-                            'w-full justify-between',
-                            !field.value && 'text-muted-foreground',
-                          )}
-                        >
-                          {field.value
-                            ? pistas.find((pista) => pista.id === field.value)
-                                ?.nome
-                            : 'Selecione a Pista'}
-                          <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="p-2 max-h-[400px]">
-                      <Command>
-                        <CommandInput
-                          placeholder="Pesquise a pista..."
-                          className="h-9"
-                        />
-                        <ScrollArea className="h-[300px]">
-                          <CommandEmpty>No framework found.</CommandEmpty>
-                          <CommandGroup>
-                            <CommandList>
-                              {pistas.map((pista) => (
-                                <CommandItem
-                                  value={pista.nome}
-                                  key={pista.id}
-                                  onSelect={() => {
-                                    form.setValue('idPista', pista.id)
-                                    setOpenPistas(false)
-                                  }}
-                                >
-                                  {pista.nome}
-                                  <CheckIcon
-                                    className={cn(
-                                      'ml-auto h-4 w-4',
-                                      pista.id === field.value
-                                        ? 'opacity-100'
-                                        : 'opacity-0',
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                            </CommandList>
-                          </CommandGroup>
-                        </ScrollArea>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
+                  <FormLabel>Pista</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a pista" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {pistas.map((pista) => (
+                        <SelectItem key={pista.id} value={pista.id}>
+                          {pista.nome}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            {/* SELECIONE A TEMPORADA */}
             <FormField
               control={form.control}
               name="idTemporada"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Local</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+                  <FormLabel>Temporada</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a temporada" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {temporadas.map((temporada) => (
+                        <SelectItem key={temporada.id} value={temporada.id}>
+                          {temporada.nome}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {/* SELECIONE A DATA */}
+            <FormField
+              control={form.control}
+              name="data"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Data</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={'outline'}
+                          className={cn(
+                            'w-full pl-3 text-left font-normal',
+                            !field.value && 'text-muted-foreground',
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, 'dd/MM/yyyy')
+                          ) : (
+                            <span>Selecione a data</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={
+                          field.value ? new Date(field.value) : undefined
+                        }
+                        onSelect={(date) => {
+                          field.onChange(date ? date.toISOString() : undefined)
+                          form.clearErrors('data')
+                        }}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date('1900-01-01')
+                        }
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}
@@ -265,9 +292,26 @@ export const SheetFormCorrida = ({
               name="tempo"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Url da Imagem</FormLabel>
+                  <FormLabel>Tempo</FormLabel>
                   <FormControl>
                     <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="voltas"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Voltas</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

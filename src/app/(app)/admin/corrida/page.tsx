@@ -85,7 +85,7 @@ export default function Page() {
   return (
     <div className="flex-1 max-w-4xl w-full mx-auto">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold mb-4">Pistas</h1>
+        <h1 className="text-2xl font-bold mb-4">Corridas</h1>
         <SheetFormCorrida
           open={sheetOpen}
           onOpenChange={setSheetOpen}
@@ -93,7 +93,7 @@ export default function Page() {
           defaultValue={corridaEdit}
         >
           <Button onClick={() => setCorridaEdit(undefined)}>
-            Adicionar Pista
+            Adicionar Corrida
           </Button>
         </SheetFormCorrida>
       </div>
@@ -116,12 +116,18 @@ export default function Page() {
         <TableBody>
           {corridas.length > 0 ? (
             corridas
-              .sort((a, b) => b.data.getTime() - a.data.getTime())
+              .sort(
+                (a, b) =>
+                  new Date(b.data.toDate()).getTime() -
+                  new Date(a.data.toDate()).getTime(),
+              )
               .map((corrida) => (
                 <TableRow key={corrida.id}>
                   <TableCell>{pistas[corrida.idPista]}</TableCell>
                   <TableCell>{temporadas[corrida.idTemporada]}</TableCell>
-                  <TableCell>{corrida.data.toLocaleDateString()}</TableCell>
+                  <TableCell>
+                    {new Date(corrida.data.toDate()).toLocaleDateString()}
+                  </TableCell>
                   <TableCell>{corrida.voltas}</TableCell>
                   <TableCell>{corrida.tempo}</TableCell>
                   <TableCell>{pilotos[corrida.idPiloto || '']}</TableCell>
@@ -166,7 +172,7 @@ export default function Page() {
           ) : (
             <TableRow>
               <TableCell colSpan={7} className="text-center">
-                Nenhuma temporada encontrada
+                Nenhuma corrida encontrada
               </TableCell>
             </TableRow>
           )}

@@ -7,6 +7,7 @@ import {
   getDoc,
   getDocs,
   query,
+  Timestamp,
   updateDoc,
   where,
 } from 'firebase/firestore'
@@ -15,7 +16,7 @@ export type Corrida = {
   id: string
   idPista: string
   idTemporada: string
-  data: Date
+  data: Timestamp
   voltas: number
   tempo: string
   idPiloto?: string
@@ -27,6 +28,7 @@ export const getAllCorrida = async (): Promise<Corrida[]> => {
   const corridaCollection = collection(db, nameCollection)
   const corridaSnapshot = await getDocs(corridaCollection)
   const corridas = corridaSnapshot.docs.map((doc) => doc.data() as Corrida)
+  console.log(corridas)
   return corridas
 }
 
@@ -59,8 +61,8 @@ export const addCorrida = async (
   const docRef = await addDoc(corridaCollection, corrida)
 
   const novaCorrida: Corrida = {
-    id: docRef.id,
     ...corrida,
+    id: docRef.id,
   }
 
   await updateCorrida(novaCorrida)
