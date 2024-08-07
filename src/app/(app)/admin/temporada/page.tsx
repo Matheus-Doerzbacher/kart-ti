@@ -74,7 +74,13 @@ export default function Page() {
                   <TableCell>{temporada.nome}</TableCell>
                   <TableCell>{temporada.ano}</TableCell>
                   <TableCell className="text-center">
-                    {temporada.atual ? 'Sim' : 'Não'}
+                    <div
+                      className={`rounded-full text-white text-xs px-2 py-1 ${
+                        temporada.atual ? 'bg-green-500' : 'bg-destructive'
+                      }`}
+                    >
+                      {temporada.atual ? 'Sim' : 'Não'}
+                    </div>
                   </TableCell>
                   <TableCell className="flex gap-2 justify-end">
                     <SheetFormTemporada

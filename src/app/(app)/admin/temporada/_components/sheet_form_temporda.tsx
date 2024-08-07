@@ -87,13 +87,14 @@ export const SheetFormTemporada = ({
   const onSubmit = form.handleSubmit(async (data) => {
     try {
       const navaTemporada = {
+        id: defaultValue?.id || '',
         nome: data.nome,
         ano: data.ano,
         atual: data.atual ?? false,
       }
 
-      if (defaultValue) {
-        await updateTemporada(defaultValue.id, navaTemporada)
+      if (navaTemporada.id) {
+        await updateTemporada(navaTemporada)
       } else {
         await addTemporada(navaTemporada)
       }

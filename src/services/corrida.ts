@@ -27,8 +27,10 @@ const nameCollection = 'corrida'
 export const getAllCorrida = async (): Promise<Corrida[]> => {
   const corridaCollection = collection(db, nameCollection)
   const corridaSnapshot = await getDocs(corridaCollection)
-  const corridas = corridaSnapshot.docs.map((doc) => doc.data() as Corrida)
-  console.log(corridas)
+  const corridas = corridaSnapshot.docs.map((doc) => {
+    const corrida = doc.data() as Corrida
+    return { ...corrida, id: doc.id }
+  })
   return corridas
 }
 
