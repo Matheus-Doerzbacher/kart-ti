@@ -85,13 +85,13 @@ export default function Page() {
                           deletePista(pista.id)
                           buscarPistas()
                           toast({
-                            title: 'Temporada deletada com sucesso',
+                            title: 'Pista deletada com sucesso',
                           })
                         } catch (error) {
                           console.error(error)
                           toast({
                             variant: 'destructive',
-                            title: 'Erro ao deletar temporada',
+                            title: 'Erro ao deletar a pista',
                             description: 'Ocorreu um erro inesperado',
                           })
                         }
