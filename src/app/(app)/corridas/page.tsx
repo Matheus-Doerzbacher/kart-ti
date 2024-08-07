@@ -11,7 +11,11 @@ import {
 import PageCorridaDetail from './_components/page_corrida_detail'
 import PagePilotosRanking from './_components/page_pilotos_ranking'
 import PagePilotoDetail from './_components/page_piloto_detail'
-import { getAllTemporada, Temporada } from '@/services/temporada'
+import {
+  getAllTemporada,
+  getTemporadaAtual,
+  Temporada,
+} from '@/services/temporada'
 import { getAllPiloto, Piloto } from '@/services/piloto'
 import { Corrida, getCorridasPorTemporada } from '@/services/corrida'
 import { getPista } from '@/services/pista'
@@ -34,6 +38,9 @@ export default function Page() {
     const buscarTemporadas = async () => {
       const temporadas = await getAllTemporada()
       setTemporadasSelect(temporadas)
+
+      const temporadaAtual = await getTemporadaAtual()
+      setIdTemporada(temporadaAtual.id)
     }
     buscarTemporadas()
     setIsLoading(false)

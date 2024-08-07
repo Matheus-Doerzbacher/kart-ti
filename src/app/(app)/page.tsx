@@ -52,7 +52,7 @@ export default function Page() {
             Corridas Recentes
           </h2>
           <Link
-            href="#"
+            href="/corridas"
             className="text-primary hover:text-primary-hover"
             prefetch={false}
           >
