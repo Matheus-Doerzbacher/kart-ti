@@ -67,7 +67,10 @@ export default function Page() {
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Avatar className="w-10 h-10">
-                        <AvatarImage src={piloto.urlImage} />
+                        <AvatarImage
+                          src={piloto.urlImage}
+                          className="object-cover"
+                        />
                         <AvatarFallback>{piloto.nome.charAt(0)}</AvatarFallback>
                       </Avatar>
                       {piloto.nome}
