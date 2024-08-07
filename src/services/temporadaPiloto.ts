@@ -75,7 +75,8 @@ export const getTemporadaPilotoByPilotoAndTemporada = async (
   if (temporadaPilotoSnapshot.docs.length === 0) {
     return null
   }
-  return temporadaPilotoSnapshot.docs[0].data() as TemporadaPiloto
+  const doc = temporadaPilotoSnapshot.docs[0]
+  return { ...doc.data(), id: doc.id } as TemporadaPiloto
 }
 
 export const addTemporadaPiloto = async (
@@ -89,7 +90,6 @@ export const updateTemporadaPiloto = async (
   temporadaPiloto: TemporadaPiloto,
 ): Promise<void> => {
   const temporadaPilotoDoc = doc(db, nameCollection, temporadaPiloto.id)
-
   await updateDoc(temporadaPilotoDoc, temporadaPiloto)
 }
 
@@ -126,6 +126,8 @@ export const recalcularTemporadaPiloto = async (
     idPiloto,
     temporada.id,
   )
+
+  console.log(temporadaPiloto)
 
   if (!temporadaPiloto) {
     addTemporadaPiloto({
