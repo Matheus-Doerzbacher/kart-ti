@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Table,
   TableHeader,
@@ -6,10 +8,27 @@ import {
   TableBody,
   TableCell,
 } from '@/components/ui/table'
-import { corridasMock } from '@/mock/corridasMock'
-import { resultadoPilotosMock } from '@/mock/resultadoPilotoMock'
+import { getCorrida } from '@/services/corrida'
+import { ResultadoPiloto } from '@/services/resultadoPiloto'
+import { useEffect, useState } from 'react'
 
-export default function PageCorridaDetail() {
+export default function PageCorridaDetail({
+  idCorrida,
+}: {
+  idCorrida: string
+}) {
+  const [corrida, setCorrida] = useState<Corrida | null>(null)
+  const [resultadoPilotos, setResultadoPilotos] = useState<ResultadoPiloto[]>(
+    [],
+  )
+
+  useEffect(() => {
+    const fetchCorrida = async () => {
+      const corrida = await getCorrida(idCorrida)
+      setCorrida(corrida)
+    }
+  }, [idCorrida])
+
   return (
     <main className="flex-1 py-8 px-6">
       <h1 className="text-2xl font-bold">
