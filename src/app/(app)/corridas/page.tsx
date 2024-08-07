@@ -166,7 +166,7 @@ export default function Page() {
       {idTemporada && selectedOption === 'pilotos' && idPiloto === 'todos' ? (
         <PagePilotosRanking idTemporada={idTemporada} />
       ) : idTemporada && selectedOption === 'pilotos' ? (
-        <PagePilotoDetail />
+        <PagePilotoDetail idPiloto={idPiloto} idTemporada={idTemporada} />
       ) : null}
     </main>
   )

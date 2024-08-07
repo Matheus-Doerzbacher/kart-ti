@@ -1,3 +1,4 @@
+'use client'
 import Link from 'next/link'
 import {
   Card,
@@ -15,10 +16,30 @@ import {
   TableCell,
 } from '@/components/ui/table'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import { temporadaPilotoMock } from '@/mock/temporadaPilotoMock'
 import { TableRowPiloto } from './_components/table_row_piloto'
+import { useEffect, useState } from 'react'
+import { getTemporadaAtual } from '@/services/temporada'
+import {
+  getAllTempordaPilotoByTemporada,
+  TemporadaPiloto,
+} from '@/services/temporadaPiloto'
 
 export default function Page() {
+  const [temporadaPilotos, setTemporadaPilotos] = useState<TemporadaPiloto[]>(
+    [],
+  )
+
+  useEffect(() => {
+    const fetchTemporadaPilotos = async () => {
+      const temporadaAtual = await getTemporadaAtual()
+      const temporadaPilotos = await getAllTempordaPilotoByTemporada(
+        temporadaAtual.id,
+      )
+      setTemporadaPilotos(temporadaPilotos)
+    }
+    fetchTemporadaPilotos()
+  }, [])
+
   return (
     <main className="flex-1 py-8 px-6">
       <section>
@@ -221,13 +242,13 @@ export default function Page() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {temporadaPilotoMock
+                  {temporadaPilotos
                     .sort((a, b) => b.pontos - a.pontos)
                     .slice(0, 3)
                     .map((piloto, index) => (
                       <TableRowPiloto
                         key={piloto.id}
-                        piloto={piloto}
+                        temporadaPiloto={piloto}
                         tipo="pontos"
                         index={index}
                       />
@@ -250,13 +271,13 @@ export default function Page() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {temporadaPilotoMock
+                  {temporadaPilotos
                     .sort((a, b) => b.vitorias - a.vitorias)
                     .slice(0, 3)
                     .map((piloto, index) => (
                       <TableRowPiloto
                         key={piloto.id}
-                        piloto={piloto}
+                        temporadaPiloto={piloto}
                         tipo="vitorias"
                         index={index}
                       />

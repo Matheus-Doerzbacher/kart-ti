@@ -1,5 +1,4 @@
 'use client'
-import { temporadaPilotoMock } from '@/mock/temporadaPilotoMock'
 import { CardPiloto } from './_components/card_pilotos'
 import { useEffect, useState } from 'react'
 import {

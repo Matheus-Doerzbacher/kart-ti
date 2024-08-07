@@ -62,6 +62,22 @@ export const getAllResultadoPilotos = async (
   return resultados
 }
 
+export const getAllResultadoPilotosByPiloto = async (
+  idPiloto: string,
+): Promise<ResultadoPiloto[]> => {
+  const resultadoCollection = collection(db, nameCollection)
+  const q = query(resultadoCollection, where('idPiloto', '==', idPiloto))
+  const resultadoSnapshot = await getDocs(q)
+  const resultados = resultadoSnapshot.docs.map(
+    (doc) =>
+      ({
+        ...doc.data(),
+        id: doc.id,
+      }) as ResultadoPiloto,
+  )
+  return resultados
+}
+
 export const getResultadoPiloto = async (
   id: string,
 ): Promise<ResultadoPiloto> => {

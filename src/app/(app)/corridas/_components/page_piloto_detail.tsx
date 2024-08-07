@@ -6,21 +6,79 @@ import {
   TableBody,
   TableCell,
 } from '@/components/ui/table'
-import { resultadoPilotosMock } from '@/mock/resultadoPilotoMock'
-import { temporadaPilotoMock } from '@/mock/temporadaPilotoMock'
+import { Corrida, getCorrida } from '@/services/corrida'
+import { getPiloto, Piloto } from '@/services/piloto'
+import { getPista } from '@/services/pista'
+import {
+  getAllResultadoPilotosByPiloto,
+  ResultadoPiloto,
+} from '@/services/resultadoPiloto'
+import {
+  getTemporadaPilotoByPilotoAndTemporada,
+  TemporadaPiloto,
+} from '@/services/temporadaPiloto'
+import { useEffect, useState } from 'react'
 
-export default function PagePilotoDetail() {
-  const result = resultadoPilotosMock[0]
+export default function PagePilotoDetail({
+  idPiloto,
+  idTemporada,
+}: {
+  idPiloto: string
+  idTemporada: string
+}) {
+  const [resultadosPiloto, setResultadosPiloto] = useState<ResultadoPiloto[]>(
+    [],
+  )
+  const [piloto, setPiloto] = useState<Piloto>()
+  const [temporadaPiloto, setTemporadaPiloto] = useState<TemporadaPiloto>()
+  const [corridas, setCorridas] = useState<{ [key: string]: Corrida }>({})
+
+  useEffect(() => {
+    const buscarResultadosPiloto = async () => {
+      const resultados = await getAllResultadoPilotosByPiloto(idPiloto)
+      setResultadosPiloto(resultados)
+
+      const pilotoData = await getPiloto(idPiloto)
+      setPiloto(pilotoData)
+
+      const temporadaPilotoData = await getTemporadaPilotoByPilotoAndTemporada(
+        idPiloto,
+        idTemporada,
+      )
+      setTemporadaPiloto(temporadaPilotoData!)
+    }
+    buscarResultadosPiloto()
+  }, [idPiloto, idTemporada])
+
+  useEffect(() => {
+    const fetchCorridas = async () => {
+      const corridasData: { [key: string]: Corrida } = {}
+      if (resultadosPiloto) {
+        for (const resultadoPiloto of resultadosPiloto) {
+          const corrida = await getCorrida(resultadoPiloto.idCorrida)
+          if (corrida) {
+            const pista = await getPista(corrida.idPista)
+            corridasData[resultadoPiloto.idCorrida] = {
+              ...corrida,
+              nome: pista.nome,
+            }
+          }
+        }
+      }
+      setCorridas(corridasData)
+    }
+
+    if (resultadosPiloto && resultadosPiloto.length > 0) {
+      fetchCorridas()
+    }
+  }, [resultadosPiloto])
+
   return (
     <main className="flex-1 py-8 px-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">{result.piloto.nome}</h1>
+        <h1 className="text-2xl font-bold">{piloto?.nome}</h1>
         <p className="text-md font-semibold mr-2">
-          Pontos:{' '}
-          {
-            temporadaPilotoMock.find((t) => t.piloto.id === result.piloto.id)
-              ?.pontos
-          }
+          Pontos: {temporadaPiloto?.pontos}
         </p>
       </div>
       <Table>
@@ -44,13 +102,15 @@ export default function PagePilotoDetail() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {[0, 1, 2, 3].map((index) => (
+          {resultadosPiloto.map((result, index) => (
             <TableRow key={index} className="hover:bg-secondary">
               <TableCell className="text-center">
-                {result.corrida.pista.nome}
+                {corridas[result.idCorrida]?.nome}
               </TableCell>
               <TableCell className="text-center">
-                {result.corrida.data.toLocaleDateString('pt-BR')}
+                {corridas[result.idCorrida]?.data
+                  .toDate()
+                  .toLocaleDateString('pt-BR')}
               </TableCell>
               <TableCell className="text-center">
                 {result.melhorVolta}
