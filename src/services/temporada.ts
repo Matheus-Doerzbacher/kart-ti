@@ -6,7 +6,9 @@ import {
   doc,
   getDoc,
   getDocs,
+  query,
   updateDoc,
+  where,
 } from 'firebase/firestore'
 
 export type Temporada = {
@@ -34,12 +36,13 @@ export const getTemporada = async (id: string): Promise<Temporada> => {
   return { ...temporadaSnapshot.data(), id: temporadaSnapshot.id } as Temporada
 }
 
-// export const getTemporadaAtual = async (): Promise<Temporada> => {
-//   const temporadaCollection = collection(db, nameCollection)
-//   const q = query(temporadaCollection, where('atual', '==', true))
-//   const temporadaSnapshot = await getDocs(q)
-//   return temporadaSnapshot.docs[0].data() as Temporada
-// }
+export const getTemporadaAtual = async (): Promise<Temporada> => {
+  const temporadaCollection = collection(db, nameCollection)
+  const q = query(temporadaCollection, where('atual', '==', true))
+  const temporadaSnapshot = await getDocs(q)
+  const doc = temporadaSnapshot.docs[0]
+  return { ...doc.data(), id: doc.id } as Temporada
+}
 
 export const addTemporada = async (
   temporada: Omit<Temporada, 'id'>,
