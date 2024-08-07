@@ -1,3 +1,4 @@
+'use client'
 import {
   Table,
   TableHeader,
@@ -6,10 +7,48 @@ import {
   TableBody,
   TableCell,
 } from '@/components/ui/table'
-import { temporadaPilotoMock } from '@/mock/temporadaPilotoMock'
-import { TemporadaPiloto } from '@/services/temporadaPiloto'
+import { getPiloto } from '@/services/piloto'
+import {
+  getAllTempordaPilotoByTemporada,
+  TemporadaPiloto,
+} from '@/services/temporadaPiloto'
+import { useEffect, useState } from 'react'
 
-export default function PagePilotosRanking() {
+export default function PagePilotosRanking({
+  idTemporada,
+}: {
+  idTemporada: string
+}) {
+  const [temporadaPilotos, setTemporadaPilotos] = useState<TemporadaPiloto[]>(
+    [],
+  )
+  const [pilotos, setPilotos] = useState<{ [key: string]: string }>({})
+
+  useEffect(() => {
+    const fetchTemporadaPilotos = async () => {
+      const data = await getAllTempordaPilotoByTemporada(idTemporada)
+      setTemporadaPilotos(data)
+    }
+    fetchTemporadaPilotos()
+  }, [idTemporada])
+
+  useEffect(() => {
+    const fetchPistas = async () => {
+      const pistasData: { [key: string]: string } = {}
+      if (temporadaPilotos) {
+        for (const temporadaPiloto of temporadaPilotos) {
+          const piloto = await getPiloto(temporadaPiloto.idPiloto)
+          pistasData[temporadaPiloto.idPiloto] = piloto.nome
+        }
+      }
+      setPilotos(pistasData)
+    }
+
+    if (temporadaPilotos && temporadaPilotos.length > 0) {
+      fetchPistas()
+    }
+  }, [temporadaPilotos])
+
   return (
     <main className="flex-1 py-8 px-6">
       <h1 className="text-2xl font-bold">{`Pilotos`}</h1>
@@ -19,9 +58,7 @@ export default function PagePilotosRanking() {
             <TableHead className="text-center text-primary-foreground rounded-tl-lg">
               Pos
             </TableHead>
-            <TableHead className="text-center text-primary-foreground">
-              Nome
-            </TableHead>
+            <TableHead className=" text-primary-foreground">Nome</TableHead>
             <TableHead className="text-center text-primary-foreground">
               Pontos
             </TableHead>
@@ -31,16 +68,16 @@ export default function PagePilotosRanking() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {temporadaPilotoMock.map((piloto: TemporadaPiloto, index) => (
-            <TableRow key={index} className="hover:bg-secondary">
-              <TableCell className="text-center">{index + 1}</TableCell>
-              <TableCell className="text-center">
-                {piloto.piloto.nome}
-              </TableCell>
-              <TableCell className="text-center">{piloto.pontos}</TableCell>
-              <TableCell className="text-center">{piloto.vitorias}</TableCell>
-            </TableRow>
-          ))}
+          {temporadaPilotos
+            .sort((a, b) => b.pontos - a.pontos)
+            .map((piloto: TemporadaPiloto, index) => (
+              <TableRow key={index} className="hover:bg-secondary">
+                <TableCell className="text-center">{index + 1}</TableCell>
+                <TableCell>{pilotos[piloto.idPiloto]}</TableCell>
+                <TableCell className="text-center">{piloto.pontos}</TableCell>
+                <TableCell className="text-center">{piloto.vitorias}</TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </main>

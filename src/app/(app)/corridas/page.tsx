@@ -164,7 +164,7 @@ export default function Page() {
         <PageCorridaDetail idCorrida={idCorrida} />
       ) : null}
       {idTemporada && selectedOption === 'pilotos' && idPiloto === 'todos' ? (
-        <PagePilotosRanking />
+        <PagePilotosRanking idTemporada={idTemporada} />
       ) : idTemporada && selectedOption === 'pilotos' ? (
         <PagePilotoDetail />
       ) : null}
