@@ -8,8 +8,13 @@ import {
   TableBody,
   TableCell,
 } from '@/components/ui/table'
-import { getCorrida } from '@/services/corrida'
-import { ResultadoPiloto } from '@/services/resultadoPiloto'
+import { Corrida, getCorrida } from '@/services/corrida'
+import { getPiloto } from '@/services/piloto'
+import { getPista, Pista } from '@/services/pista'
+import {
+  getAllResultadoPilotos,
+  ResultadoPiloto,
+} from '@/services/resultadoPiloto'
 import { useEffect, useState } from 'react'
 
 export default function PageCorridaDetail({
@@ -21,18 +26,53 @@ export default function PageCorridaDetail({
   const [resultadoPilotos, setResultadoPilotos] = useState<ResultadoPiloto[]>(
     [],
   )
+  const [pista, setPista] = useState<Pista>()
+  const [pilotos, setPilotos] = useState<{ [key: string]: string }>({})
 
   useEffect(() => {
     const fetchCorrida = async () => {
-      const corrida = await getCorrida(idCorrida)
-      setCorrida(corrida)
+      const dataCorrida = await getCorrida(idCorrida)
+      setCorrida(dataCorrida)
+
+      const dataPista = await getPista(dataCorrida.idPista)
+      setPista(dataPista)
+
+      const dataResultadoPilotos = await getAllResultadoPilotos(idCorrida)
+      setResultadoPilotos(dataResultadoPilotos)
     }
+    fetchCorrida()
   }, [idCorrida])
+
+  useEffect(() => {
+    const fetchPistas = async () => {
+      const pilotosData: { [key: string]: string } = {}
+      if (resultadoPilotos) {
+        for (const result of resultadoPilotos) {
+          const piloto = await getPiloto(result.idPiloto)
+          pilotosData[result.idPiloto] = piloto.nome
+        }
+      }
+      setPilotos(pilotosData)
+    }
+
+    if (resultadoPilotos && resultadoPilotos.length > 0) {
+      fetchPistas()
+    }
+  }, [resultadoPilotos])
+
+  const valorDoPilotoDaFrente = (valor: string) => {
+    const numeroInteiro = parseInt(valor)
+    if (!isNaN(numeroInteiro) && numeroInteiro > 0) {
+      return `-${numeroInteiro} Voltas`
+    } else {
+      return valor
+    }
+  }
 
   return (
     <main className="flex-1 py-8 px-6">
       <h1 className="text-2xl font-bold">
-        {`${corridasMock[0].pista.nome} ${corridasMock[0].data.toLocaleDateString()}`}
+        {`${pista?.nome} ${corrida?.data.toDate().toLocaleDateString()}`}
       </h1>
       <Table>
         <TableHeader>
@@ -73,38 +113,41 @@ export default function PageCorridaDetail({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {resultadoPilotosMock.map((result, index) => (
-            <TableRow key={index} className="hover:bg-secondary">
-              <TableCell className="text-center">{result.posicao}</TableCell>
-              <TableCell className="text-center">{result.numeroKart}</TableCell>
-              <TableCell>{result.piloto.nome}</TableCell>
-              <TableCell className="text-center">
-                {result.numeroDaMelhorVolta}
-              </TableCell>
-              <TableCell className="text-center">
-                {result.melhorVolta}
-              </TableCell>
-              <TableCell className="text-center">
-                {typeof result.tempoDoPilotoLider === 'number'
-                  ? `-${result.tempoDoPilotoLider} voltas`
-                  : result.tempoDoPilotoLider}
-              </TableCell>
-              <TableCell className="text-center">
-                {typeof result.tempoDoPilotoDaFrente === 'number'
-                  ? `-${result.tempoDoPilotoDaFrente} voltas`
-                  : result.tempoDoPilotoDaFrente}
-              </TableCell>
-              <TableCell className="text-center">
-                {result.velocidadeMedia}
-              </TableCell>
-              <TableCell className="text-center">
-                {result.posicaoQualificacao}
-              </TableCell>
-              <TableCell className="text-center">
-                {result.tempoQualificacao}
-              </TableCell>
-            </TableRow>
-          ))}
+          {resultadoPilotos
+            .sort((a, b) => a.posicao - b.posicao)
+            .map((result, index) => (
+              <TableRow key={index} className="hover:bg-secondary">
+                <TableCell className="text-center">{result.posicao}</TableCell>
+                <TableCell className="text-center">
+                  {result.numeroKart}
+                </TableCell>
+                <TableCell>{pilotos[result.idPiloto]}</TableCell>
+                <TableCell className="text-center">
+                  {result.numeroDaMelhorVolta}
+                </TableCell>
+                <TableCell className="text-center">
+                  {result.melhorVolta}
+                </TableCell>
+                <TableCell className="text-center">
+                  {valorDoPilotoDaFrente(result.tempoDoPilotoLider) || '---'}
+                </TableCell>
+                <TableCell className="text-center">
+                  {valorDoPilotoDaFrente(result.tempoDoPilotoDaFrente) || '---'}
+                </TableCell>
+                <TableCell className="text-center">
+                  {result.totalDeVoltas}
+                </TableCell>
+                <TableCell className="text-center">
+                  {result.velocidadeMedia}
+                </TableCell>
+                <TableCell className="text-center">
+                  {result.posicaoQualificacao}
+                </TableCell>
+                <TableCell className="text-center">
+                  {result.tempoQualificacao}
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
       <div className="mt-4 text-sm text-muted-foreground">
