@@ -46,7 +46,7 @@ export const getPontos = (posicao: number) => {
   return 0
 }
 
-export const getAllResultadoPilotos = async (
+export const getAllResultadoPilotosByIdCorrida = async (
   idCorrida: string,
 ): Promise<ResultadoPiloto[]> => {
   const resultadoCollection = collection(db, nameCollection)

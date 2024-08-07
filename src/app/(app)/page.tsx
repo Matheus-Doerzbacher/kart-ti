@@ -13,9 +13,7 @@ import {
   TableRow,
   TableHead,
   TableBody,
-  TableCell,
 } from '@/components/ui/table'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { TableRowPiloto } from './_components/table_row_piloto'
 import { useEffect, useState } from 'react'
 import { getTemporadaAtual } from '@/services/temporada'
@@ -23,21 +21,27 @@ import {
   getAllTempordaPilotoByTemporada,
   TemporadaPiloto,
 } from '@/services/temporadaPiloto'
+import { Corrida, getCorridasPorTemporada } from '@/services/corrida'
+import { TableRowCorrida } from './_components/table_row_corrida'
 
 export default function Page() {
   const [temporadaPilotos, setTemporadaPilotos] = useState<TemporadaPiloto[]>(
     [],
   )
+  const [corridas, setCorridas] = useState<Corrida[]>([])
 
   useEffect(() => {
-    const fetchTemporadaPilotos = async () => {
+    const fetchData = async () => {
       const temporadaAtual = await getTemporadaAtual()
       const temporadaPilotos = await getAllTempordaPilotoByTemporada(
         temporadaAtual.id,
       )
       setTemporadaPilotos(temporadaPilotos)
+
+      const corridasData = await getCorridasPorTemporada(temporadaAtual.id)
+      setCorridas(corridasData)
     }
-    fetchTemporadaPilotos()
+    fetchData()
   }, [])
 
   return (
@@ -56,162 +60,30 @@ export default function Page() {
           </Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Corrida na Pista de Corrida</CardTitle>
-              <CardDescription>15 de Junho de 2024</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Pos</TableHead>
-                    <TableHead>Piloto</TableHead>
-                    <TableHead>Tempo</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>1</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>JS</AvatarFallback>
-                      </Avatar>
-                      João da Silva
-                    </TableCell>
-                    <TableCell>1:23.456</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>2</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>MO</AvatarFallback>
-                      </Avatar>
-                      Maria Oliveira
-                    </TableCell>
-                    <TableCell>1:24.789</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>3</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>PA</AvatarFallback>
-                      </Avatar>
-                      Pedro Almeida
-                    </TableCell>
-                    <TableCell>1:25.012</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Corrida em Riverside</CardTitle>
-              <CardDescription>1 de Junho de 2024</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Pos</TableHead>
-                    <TableHead>Piloto</TableHead>
-                    <TableHead>Tempo</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>1</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>MO</AvatarFallback>
-                      </Avatar>
-                      Maria Oliveira
-                    </TableCell>
-                    <TableCell>1:22.789</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>2</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>PA</AvatarFallback>
-                      </Avatar>
-                      Pedro Almeida
-                    </TableCell>
-                    <TableCell>1:23.012</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>3</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>JS</AvatarFallback>
-                      </Avatar>
-                      João da Silva
-                    </TableCell>
-                    <TableCell>1:24.456</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Corrida em Lakeside</CardTitle>
-              <CardDescription>15 de Maio de 2024</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Pos</TableHead>
-                    <TableHead>Piloto</TableHead>
-                    <TableHead>Tempo</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>1</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>PA</AvatarFallback>
-                      </Avatar>
-                      Pedro Almeida
-                    </TableCell>
-                    <TableCell>1:21.012</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>2</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>JS</AvatarFallback>
-                      </Avatar>
-                      João da Silva
-                    </TableCell>
-                    <TableCell>1:22.456</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>3</TableCell>
-                    <TableCell className="flex items-center gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src="/placeholder-user.jpg" />
-                        <AvatarFallback>MO</AvatarFallback>
-                      </Avatar>
-                      Maria Oliveira
-                    </TableCell>
-                    <TableCell>1:23.789</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+          {corridas.map((corrida) => (
+            <Card key={corrida.id}>
+              <CardHeader>
+                <CardTitle>Corrida na Pista de Corrida</CardTitle>
+                <CardDescription>15 de Junho de 2024</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Pos</TableHead>
+                      <TableHead>Piloto</TableHead>
+                      <TableHead className="text-center">
+                        Melhor Volta
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRowCorrida corrida={corrida} />
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </section>
       <section className="mt-12">
