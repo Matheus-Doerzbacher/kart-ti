@@ -4,6 +4,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   updateDoc,
 } from 'firebase/firestore'
@@ -27,11 +28,11 @@ export const getAllTemporada = async (): Promise<Temporada[]> => {
   return temporadas
 }
 
-// export const getTemporada = async (id: string): Promise<Temporada> => {
-//   const temporadaDoc = doc(db, nameCollection, id)
-//   const temporadaSnapshot = await getDoc(temporadaDoc)
-//   return { ...temporadaSnapshot.data(), id: temporadaSnapshot.id } as Temporada
-// }
+export const getTemporada = async (id: string): Promise<Temporada> => {
+  const temporadaDoc = doc(db, nameCollection, id)
+  const temporadaSnapshot = await getDoc(temporadaDoc)
+  return { ...temporadaSnapshot.data(), id: temporadaSnapshot.id } as Temporada
+}
 
 // export const getTemporadaAtual = async (): Promise<Temporada> => {
 //   const temporadaCollection = collection(db, nameCollection)
