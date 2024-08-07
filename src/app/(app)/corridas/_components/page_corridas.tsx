@@ -1,3 +1,4 @@
+'use client'
 import {
   Table,
   TableHeader,
@@ -6,9 +7,60 @@ import {
   TableBody,
   TableCell,
 } from '@/components/ui/table'
-import { corridasMock } from '@/mock/corridasMock'
+import { Corrida, getCorridasPorTemporada } from '@/services/corrida'
+import { getPiloto } from '@/services/piloto'
+import { getPista } from '@/services/pista'
+import { useEffect, useState } from 'react'
 
-export default function PageCorridas() {
+export default function PageCorridas({ idTemporada }: { idTemporada: string }) {
+  const [corridas, setCorridas] = useState<Corrida[]>([])
+  const [pistas, setPistas] = useState<{ [key: string]: string }>({})
+  const [pilotosGanhadores, setPilotosGanhadores] = useState<{
+    [key: string]: string
+  }>({})
+
+  useEffect(() => {
+    const buscarCorridas = async () => {
+      const data: Corrida[] = await getCorridasPorTemporada(idTemporada)
+      setCorridas(data)
+    }
+    buscarCorridas()
+  }, [idTemporada])
+
+  useEffect(() => {
+    const fetchPistas = async () => {
+      const pistasData: { [key: string]: string } = {}
+      if (corridas) {
+        for (const corrida of corridas) {
+          const pista = await getPista(corrida.idPista)
+          pistasData[pista.id] = pista.nome
+        }
+      }
+      setPistas(pistasData)
+    }
+
+    if (corridas && corridas.length > 0) {
+      fetchPistas()
+    }
+  }, [corridas])
+
+  useEffect(() => {
+    const fetchPilotos = async () => {
+      const pilotosGanhadoresData: { [key: string]: string } = {}
+      if (corridas) {
+        for (const corrida of corridas) {
+          const piloto = await getPiloto(corrida.idPiloto || '')
+          pilotosGanhadoresData[piloto.id] = piloto.nome
+        }
+      }
+      setPilotosGanhadores(pilotosGanhadoresData)
+    }
+
+    if (corridas && corridas.length > 0) {
+      fetchPilotos()
+    }
+  }, [corridas])
+
   return (
     <main className="flex-1 py-8 px-6">
       <h1 className="text-2xl font-bold">Corridas</h1>
@@ -27,12 +79,14 @@ export default function PageCorridas() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {corridasMock.map((corrida, index) => (
+          {corridas.map((corrida, index) => (
             <TableRow key={index} className="hover:bg-secondary">
-              <TableCell>{corrida.pista.nome}</TableCell>
-              <TableCell>{corrida.data.toLocaleDateString()}</TableCell>
-              <TableCell>{corrida.ganhador?.nome || ''}</TableCell>
-              <TableCell>{corrida.voltas}</TableCell>
+              <TableCell>{pistas[corrida.idPista]}</TableCell>
+              <TableCell>
+                {corrida.data.toDate().toLocaleDateString()}
+              </TableCell>
+              <TableCell>{pilotosGanhadores[corrida.idPiloto || '']}</TableCell>
+              <TableCell className="pl-5">{corrida.voltas}</TableCell>
               <TableCell>{corrida.tempo}</TableCell>
             </TableRow>
           ))}

@@ -71,6 +71,18 @@ export const addCorrida = async (
   await updateCorrida(novaCorrida)
 }
 
+export const atualizarGanhadorCorrida = async (
+  idCorrida: string,
+  idPiloto: string,
+): Promise<void> => {
+  const corrida = await getCorrida(idCorrida)
+  const corridaAtualizada = {
+    ...corrida,
+    idPiloto,
+  }
+  await updateCorrida(corridaAtualizada)
+}
+
 export const updateCorrida = async (corrida: Corrida): Promise<void> => {
   const corridaDoc = doc(db, nameCollection, corrida.id)
   await updateDoc(corridaDoc, corrida)
