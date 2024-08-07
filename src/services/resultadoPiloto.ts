@@ -6,22 +6,22 @@ import {
   doc,
   getDoc,
   getDocs,
+  query,
   updateDoc,
+  where,
 } from 'firebase/firestore'
-import { Piloto } from './piloto'
-import { Corrida } from './corrida'
 
 export type ResultadoPiloto = {
   id: string
-  piloto: Piloto
-  corrida: Corrida
+  idPiloto: string
+  idCorrida: string
   posicao: number
   melhorVolta: string
   numeroDaMelhorVolta: number
-  tempoDoPilotoDaFrente: string | number
-  tempoDoPilotoLider: string | number
+  tempoDoPilotoDaFrente: string
+  tempoDoPilotoLider: string
   totalDeVoltas: number
-  velocidadeMedia: number
+  velocidadeMedia: string
   numeroKart: number
   pontos: number
   posicaoQualificacao: number
@@ -30,11 +30,32 @@ export type ResultadoPiloto = {
 
 const nameCollection = 'resultadoPiloto'
 
-export const getAllResultadoPilotos = async (): Promise<ResultadoPiloto[]> => {
+export const getPontos = (posicao: number) => {
+  if (posicao === 1) return 20
+  if (posicao === 2) return 18
+  if (posicao === 3) return 16
+  if (posicao === 4) return 14
+  if (posicao === 5) return 12
+  if (posicao === 6) return 10
+  if (posicao === 7) return 8
+  if (posicao === 8) return 6
+  if (posicao === 9) return 4
+  if (posicao === 10) return 2
+  return 0
+}
+
+export const getAllResultadoPilotos = async (
+  idCorrida: string,
+): Promise<ResultadoPiloto[]> => {
   const resultadoCollection = collection(db, nameCollection)
-  const resultadoSnapshot = await getDocs(resultadoCollection)
+  const q = query(resultadoCollection, where('idCorrida', '==', idCorrida))
+  const resultadoSnapshot = await getDocs(q)
   const resultados = resultadoSnapshot.docs.map(
-    (doc) => doc.data() as ResultadoPiloto,
+    (doc) =>
+      ({
+        ...doc.data(),
+        id: doc.id,
+      }) as ResultadoPiloto,
   )
   return resultados
 }
@@ -55,10 +76,9 @@ export const addResultadoPiloto = async (
 }
 
 export const updateResultadoPiloto = async (
-  id: string,
-  resultado: Partial<ResultadoPiloto>,
+  resultado: ResultadoPiloto,
 ): Promise<void> => {
-  const resultadoDoc = doc(db, nameCollection, id)
+  const resultadoDoc = doc(db, nameCollection, resultado.id)
   await updateDoc(resultadoDoc, resultado)
 }
 

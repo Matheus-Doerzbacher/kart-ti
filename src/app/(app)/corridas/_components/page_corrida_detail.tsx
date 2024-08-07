@@ -40,6 +40,9 @@ export default function PageCorridaDetail() {
               Dif. Piloto Frente
             </TableHead>
             <TableHead className="text-center text-primary-foreground">
+              N. de Voltas
+            </TableHead>
+            <TableHead className="text-center text-primary-foreground">
               Vel. Média
             </TableHead>
             <TableHead className="text-center text-primary-foreground">

@@ -13,6 +13,7 @@ import {
 } from 'firebase/firestore'
 
 export type Corrida = {
+  nome?: string
   id: string
   idPista: string
   idTemporada: string

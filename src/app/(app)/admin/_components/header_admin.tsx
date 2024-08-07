@@ -56,6 +56,13 @@ export function HeaderAdmin() {
       >
         Pista
       </HeaderLink>
+      <HeaderLink
+        href="/admin/resultados"
+        prefetch={false}
+        isActive={isActive('resultados')}
+      >
+        Adicionar Resultados
+      </HeaderLink>
     </nav>
   )
 }
