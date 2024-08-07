@@ -10,6 +10,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore'
+import { recalcularTemporadaPiloto } from './temporadaPiloto'
 
 export type ResultadoPiloto = {
   id: string
@@ -73,6 +74,7 @@ export const addResultadoPiloto = async (
 ): Promise<void> => {
   const resultadoCollection = collection(db, nameCollection)
   await addDoc(resultadoCollection, resultado)
+  await recalcularTemporadaPiloto(resultado.idPiloto, resultado.idCorrida)
 }
 
 export const updateResultadoPiloto = async (
@@ -80,6 +82,7 @@ export const updateResultadoPiloto = async (
 ): Promise<void> => {
   const resultadoDoc = doc(db, nameCollection, resultado.id)
   await updateDoc(resultadoDoc, resultado)
+  await recalcularTemporadaPiloto(resultado.idPiloto, resultado.idCorrida)
 }
 
 export const deleteResultadoPiloto = async (id: string): Promise<void> => {
