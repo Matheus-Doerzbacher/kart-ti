@@ -166,12 +166,15 @@ export default function Page() {
         </Select>
       </div>
       {idTemporada && selectedOption === 'corridas' && idCorrida === 'todas' ? (
-        <PageCorridas idTemporada={idTemporada} />
+        <PageCorridas idTemporada={idTemporada} setIdCorrida={setIdCorrida} />
       ) : idTemporada && selectedOption === 'corridas' ? (
         <PageCorridaDetail idCorrida={idCorrida} />
       ) : null}
       {idTemporada && selectedOption === 'pilotos' && idPiloto === 'todos' ? (
-        <PagePilotosRanking idTemporada={idTemporada} />
+        <PagePilotosRanking
+          idTemporada={idTemporada}
+          setIdPiloto={setIdPiloto}
+        />
       ) : idTemporada && selectedOption === 'pilotos' ? (
         <PagePilotoDetail idPiloto={idPiloto} idTemporada={idTemporada} />
       ) : null}

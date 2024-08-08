@@ -16,8 +16,10 @@ import { useEffect, useState } from 'react'
 
 export default function PagePilotosRanking({
   idTemporada,
+  setIdPiloto,
 }: {
   idTemporada: string
+  setIdPiloto: React.Dispatch<React.SetStateAction<string>>
 }) {
   const [temporadaPilotos, setTemporadaPilotos] = useState<TemporadaPiloto[]>(
     [],
@@ -71,7 +73,11 @@ export default function PagePilotosRanking({
           {temporadaPilotos
             .sort((a, b) => b.pontos - a.pontos)
             .map((piloto: TemporadaPiloto, index) => (
-              <TableRow key={index} className="hover:bg-secondary">
+              <TableRow
+                key={index}
+                className="hover:bg-secondary cursor-pointer"
+                onClick={() => setIdPiloto(piloto.idPiloto)}
+              >
                 <TableCell className="text-center">{index + 1}</TableCell>
                 <TableCell>{pilotos[piloto.idPiloto]}</TableCell>
                 <TableCell className="text-center">{piloto.pontos}</TableCell>

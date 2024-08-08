@@ -12,7 +12,13 @@ import { getPiloto } from '@/services/piloto'
 import { getPista } from '@/services/pista'
 import { useEffect, useState } from 'react'
 
-export default function PageCorridas({ idTemporada }: { idTemporada: string }) {
+export default function PageCorridas({
+  idTemporada,
+  setIdCorrida,
+}: {
+  idTemporada: string
+  setIdCorrida: React.Dispatch<React.SetStateAction<string>>
+}) {
   const [corridas, setCorridas] = useState<Corrida[]>([])
   const [pistas, setPistas] = useState<{ [key: string]: string }>({})
   const [pilotosGanhadores, setPilotosGanhadores] = useState<{
@@ -80,7 +86,11 @@ export default function PageCorridas({ idTemporada }: { idTemporada: string }) {
         </TableHeader>
         <TableBody>
           {corridas.map((corrida, index) => (
-            <TableRow key={index} className="hover:bg-secondary">
+            <TableRow
+              key={index}
+              className="hover:bg-secondary cursor-pointer"
+              onClick={() => setIdCorrida(corrida.id)}
+            >
               <TableCell>{pistas[corrida.idPista]}</TableCell>
               <TableCell>
                 {corrida.data.toDate().toLocaleDateString()}

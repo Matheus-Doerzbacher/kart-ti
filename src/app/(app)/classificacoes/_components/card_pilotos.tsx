@@ -25,7 +25,7 @@ export const CardPiloto = ({
   return (
     <Card className="flex flex-col items-center p-4 hover:border-primary">
       <div className="flex justify-between w-full">
-        <div>
+        <div className="min-w-14">
           <h2 className="text-2xl font-bold">{posicao}</h2>
           <p className="text-sm">{temporadaPiloto.pontos} PTS</p>
         </div>
