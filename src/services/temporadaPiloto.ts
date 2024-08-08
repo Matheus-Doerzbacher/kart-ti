@@ -12,7 +12,7 @@ import {
 } from 'firebase/firestore'
 
 import { getCorrida, getCorridasPorTemporada } from './corrida'
-import { getAllResultadoPilotos, getPontos } from './resultadoPiloto'
+import { getAllResultadoPilotosByIdCorrida, getPontos } from './resultadoPiloto'
 
 export type TemporadaPiloto = {
   id: string
@@ -111,7 +111,7 @@ export const recalcularTemporadaPiloto = async (
   let pontos = 0
 
   corridasDaTemporada.forEach(async (corrida) => {
-    const resultados = await getAllResultadoPilotos(corrida.id)
+    const resultados = await getAllResultadoPilotosByIdCorrida(corrida.id)
     resultados.forEach((resultado) => {
       if (resultado.idPiloto === idPiloto) {
         if (resultado.posicao === 1) {

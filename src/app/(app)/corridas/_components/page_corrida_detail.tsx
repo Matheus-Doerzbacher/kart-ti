@@ -12,7 +12,7 @@ import { Corrida, getCorrida } from '@/services/corrida'
 import { getPiloto } from '@/services/piloto'
 import { getPista, Pista } from '@/services/pista'
 import {
-  getAllResultadoPilotos,
+  getAllResultadoPilotosByIdCorrida,
   ResultadoPiloto,
 } from '@/services/resultadoPiloto'
 import { useEffect, useState } from 'react'
@@ -37,7 +37,8 @@ export default function PageCorridaDetail({
       const dataPista = await getPista(dataCorrida.idPista)
       setPista(dataPista)
 
-      const dataResultadoPilotos = await getAllResultadoPilotos(idCorrida)
+      const dataResultadoPilotos =
+        await getAllResultadoPilotosByIdCorrida(idCorrida)
       setResultadoPilotos(dataResultadoPilotos)
     }
     fetchCorrida()

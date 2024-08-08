@@ -15,7 +15,7 @@ import { SheetFormResultado } from './_components/sheet_form_resultado'
 import { toast } from '@/components/ui/use-toast'
 import {
   deleteResultadoPiloto,
-  getAllResultadoPilotos,
+  getAllResultadoPilotosByIdCorrida,
   ResultadoPiloto,
 } from '@/services/resultadoPiloto'
 import { getAllTemporada, Temporada } from '@/services/temporada'
@@ -53,7 +53,7 @@ export default function Page() {
 
   const buscarResultados = useCallback(async () => {
     if (idCorrida) {
-      const data = await getAllResultadoPilotos(idCorrida)
+      const data = await getAllResultadoPilotosByIdCorrida(idCorrida)
       setResultados(data)
     }
   }, [idCorrida])
