@@ -95,6 +95,9 @@ export default function PagePilotoDetail({
               Data
             </TableHead>
             <TableHead className="text-center text-primary-foreground">
+              N. Melhor Volta
+            </TableHead>
+            <TableHead className="text-center text-primary-foreground">
               Melhor Volta
             </TableHead>
             <TableHead className="text-center text-primary-foreground">
@@ -131,6 +134,9 @@ export default function PagePilotoDetail({
                 {corridas[result.idCorrida]?.data
                   .toDate()
                   .toLocaleDateString('pt-BR')}
+              </TableCell>
+              <TableCell className="text-center">
+                {result.numeroDaMelhorVolta}
               </TableCell>
               <TableCell className="text-center">
                 {result.melhorVolta}
