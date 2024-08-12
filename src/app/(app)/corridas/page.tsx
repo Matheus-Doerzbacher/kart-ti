@@ -156,11 +156,13 @@ export default function Page() {
             ) : (
               <>
                 <SelectItem value="todos">Todos</SelectItem>
-                {pilotosSelect.map((piloto) => (
-                  <SelectItem key={piloto.id} value={piloto.id}>
-                    {piloto.nome}
-                  </SelectItem>
-                ))}
+                {pilotosSelect
+                  .sort((a, b) => a.nome.localeCompare(b.nome))
+                  .map((piloto) => (
+                    <SelectItem key={piloto.id} value={piloto.id}>
+                      {piloto.nome}
+                    </SelectItem>
+                  ))}
               </>
             )}
           </SelectContent>
@@ -169,7 +171,11 @@ export default function Page() {
       {idTemporada && selectedOption === 'corridas' && idCorrida === 'todas' ? (
         <PageCorridas idTemporada={idTemporada} setIdCorrida={setIdCorrida} />
       ) : idTemporada && selectedOption === 'corridas' ? (
-        <PageCorridaDetail idCorrida={idCorrida} />
+        <PageCorridaDetail
+          idCorrida={idCorrida}
+          setIdPiloto={setIdPiloto}
+          setSelectedOption={setSelectedOption}
+        />
       ) : null}
       {idTemporada && selectedOption === 'pilotos' && idPiloto === 'todos' ? (
         <PagePilotosRanking

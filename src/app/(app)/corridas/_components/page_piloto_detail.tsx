@@ -118,42 +118,52 @@ export default function PagePilotoDetail({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {resultadosPiloto.map((result, index) => (
-            <TableRow
-              key={index}
-              className="hover:bg-secondary cursor-pointer"
-              onClick={() => {
-                setIdCorrida(result.idCorrida)
-                setSelectedOption('corridas')
-              }}
-            >
-              <TableCell className="text-center">
-                {corridas[result.idCorrida]?.nome}
-              </TableCell>
-              <TableCell className="text-center">
-                {corridas[result.idCorrida]?.data
-                  .toDate()
-                  .toLocaleDateString('pt-BR')}
-              </TableCell>
-              <TableCell className="text-center">
-                {result.numeroDaMelhorVolta}
-              </TableCell>
-              <TableCell className="text-center">
-                {result.melhorVolta}
-              </TableCell>
-              <TableCell className="text-center">{result.posicao}</TableCell>
-              <TableCell className="text-center">
-                {result.posicaoQualificacao}
-              </TableCell>
-              <TableCell className="text-center">
-                {result.tempoQualificacao}
-              </TableCell>
-              <TableCell className="text-center">
-                {result.velocidadeMedia}
-              </TableCell>
-              <TableCell className="text-center">{result.pontos}</TableCell>
-            </TableRow>
-          ))}
+          {resultadosPiloto
+            .sort(
+              (a, b) =>
+                new Date(corridas[b.idCorrida]?.data.toDate()).getTime() -
+                new Date(corridas[a.idCorrida]?.data.toDate()).getTime(),
+            )
+            .map((result, index) => (
+              <TableRow
+                key={index}
+                className="hover:bg-secondary cursor-pointer"
+                onClick={() => {
+                  setIdCorrida(result.idCorrida)
+                  setSelectedOption('corridas')
+                }}
+              >
+                <TableCell className="text-center">
+                  {corridas[result.idCorrida]?.nome}
+                </TableCell>
+                <TableCell className="text-center">
+                  {corridas[result.idCorrida]?.data
+                    .toDate()
+                    .toLocaleDateString('pt-BR')}
+                </TableCell>
+                <TableCell className="text-center">
+                  {result.numeroDaMelhorVolta}
+                </TableCell>
+                <TableCell className="text-center">
+                  {result.melhorVolta}
+                </TableCell>
+                <TableCell className="text-center">{result.posicao}</TableCell>
+                <TableCell className="text-center">
+                  {result.posicaoQualificacao}
+                </TableCell>
+                <TableCell className="text-center">
+                  {result.tempoQualificacao}
+                </TableCell>
+                <TableCell className="text-center">
+                  {result.velocidadeMedia}
+                </TableCell>
+                <TableCell className="text-center">
+                  {result.isMelhorVoltaCorrida
+                    ? result.pontos + 1
+                    : result.pontos}
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </main>

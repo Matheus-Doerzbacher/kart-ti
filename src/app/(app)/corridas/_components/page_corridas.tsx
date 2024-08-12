@@ -85,21 +85,29 @@ export default function PageCorridas({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {corridas.map((corrida, index) => (
-            <TableRow
-              key={index}
-              className="hover:bg-secondary cursor-pointer"
-              onClick={() => setIdCorrida(corrida.id)}
-            >
-              <TableCell>{pistas[corrida.idPista]}</TableCell>
-              <TableCell>
-                {corrida.data.toDate().toLocaleDateString()}
-              </TableCell>
-              <TableCell>{pilotosGanhadores[corrida.idPiloto || '']}</TableCell>
-              <TableCell className="pl-5">{corrida.voltas}</TableCell>
-              <TableCell>{corrida.tempo}</TableCell>
-            </TableRow>
-          ))}
+          {corridas
+            .sort(
+              (a, b) =>
+                new Date(b.data.toDate()).getTime() -
+                new Date(a.data.toDate()).getTime(),
+            )
+            .map((corrida, index) => (
+              <TableRow
+                key={index}
+                className="hover:bg-secondary cursor-pointer"
+                onClick={() => setIdCorrida(corrida.id)}
+              >
+                <TableCell>{pistas[corrida.idPista]}</TableCell>
+                <TableCell>
+                  {corrida.data.toDate().toLocaleDateString()}
+                </TableCell>
+                <TableCell>
+                  {pilotosGanhadores[corrida.idPiloto || '']}
+                </TableCell>
+                <TableCell className="pl-5">{corrida.voltas}</TableCell>
+                <TableCell>{corrida.tempo}</TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </main>

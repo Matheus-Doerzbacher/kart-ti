@@ -19,8 +19,12 @@ import { useEffect, useState } from 'react'
 
 export default function PageCorridaDetail({
   idCorrida,
+  setIdPiloto,
+  setSelectedOption,
 }: {
   idCorrida: string
+  setIdPiloto: (idCorrida: string) => void
+  setSelectedOption: (selectedOption: string) => void
 }) {
   const [corrida, setCorrida] = useState<Corrida | null>(null)
   const [resultadoPilotos, setResultadoPilotos] = useState<ResultadoPiloto[]>(
@@ -122,7 +126,15 @@ export default function PageCorridaDetail({
                 <TableCell className="text-center">
                   {result.numeroKart}
                 </TableCell>
-                <TableCell>{pilotos[result.idPiloto]}</TableCell>
+                <TableCell
+                  onClick={() => {
+                    setIdPiloto(result.idPiloto)
+                    setSelectedOption('pilotos')
+                  }}
+                  className="cursor-pointer"
+                >
+                  {pilotos[result.idPiloto]}
+                </TableCell>
                 <TableCell className="text-center">
                   {result.numeroDaMelhorVolta}
                 </TableCell>
