@@ -148,7 +148,8 @@ export default function Page() {
                 <SelectItem value="todas">Todas</SelectItem>
                 {corridasSelect.map((corrida) => (
                   <SelectItem key={corrida.id} value={corrida.id}>
-                    {corrida.nome}
+                    {corrida.nome} -{' '}
+                    {corrida.data.toDate().toLocaleDateString('pt-BR')}
                   </SelectItem>
                 ))}
               </>
@@ -176,7 +177,12 @@ export default function Page() {
           setIdPiloto={setIdPiloto}
         />
       ) : idTemporada && selectedOption === 'pilotos' ? (
-        <PagePilotoDetail idPiloto={idPiloto} idTemporada={idTemporada} />
+        <PagePilotoDetail
+          idPiloto={idPiloto}
+          idTemporada={idTemporada}
+          setIdCorrida={setIdCorrida}
+          setSelectedOption={setSelectedOption}
+        />
       ) : null}
     </main>
   )

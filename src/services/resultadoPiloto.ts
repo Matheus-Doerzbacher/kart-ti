@@ -28,11 +28,12 @@ export type ResultadoPiloto = {
   pontos: number
   posicaoQualificacao: number
   tempoQualificacao: string
+  isMelhorVoltaCorrida: boolean
 }
 
 const nameCollection = 'resultadoPiloto'
 
-export const getPontos = (posicao: number) => {
+export const getPontosByPosicao = (posicao: number) => {
   if (posicao === 1) return 20
   if (posicao === 2) return 18
   if (posicao === 3) return 16
@@ -43,6 +44,12 @@ export const getPontos = (posicao: number) => {
   if (posicao === 8) return 6
   if (posicao === 9) return 4
   if (posicao === 10) return 2
+  return 0
+}
+export const getPontosByMelhorVoltaCorrida = (
+  isMelhorVoltaCorrida: boolean,
+) => {
+  if (isMelhorVoltaCorrida) return 1
   return 0
 }
 

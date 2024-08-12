@@ -22,9 +22,13 @@ import { useEffect, useState } from 'react'
 export default function PagePilotoDetail({
   idPiloto,
   idTemporada,
+  setIdCorrida,
+  setSelectedOption,
 }: {
   idPiloto: string
   idTemporada: string
+  setIdCorrida: (idCorrida: string) => void
+  setSelectedOption: (selectedOption: string) => void
 }) {
   const [resultadosPiloto, setResultadosPiloto] = useState<ResultadoPiloto[]>(
     [],
@@ -96,6 +100,15 @@ export default function PagePilotoDetail({
             <TableHead className="text-center text-primary-foreground">
               Posição
             </TableHead>
+            <TableHead className="text-center text-primary-foreground">
+              Posição Quali
+            </TableHead>
+            <TableHead className="text-center text-primary-foreground">
+              Tempo Quali
+            </TableHead>
+            <TableHead className="text-center text-primary-foreground">
+              V. Média
+            </TableHead>
             <TableHead className="text-center text-primary-foreground rounded-tr-lg">
               Pontos na Corrida
             </TableHead>
@@ -103,7 +116,14 @@ export default function PagePilotoDetail({
         </TableHeader>
         <TableBody>
           {resultadosPiloto.map((result, index) => (
-            <TableRow key={index} className="hover:bg-secondary">
+            <TableRow
+              key={index}
+              className="hover:bg-secondary cursor-pointer"
+              onClick={() => {
+                setIdCorrida(result.idCorrida)
+                setSelectedOption('corridas')
+              }}
+            >
               <TableCell className="text-center">
                 {corridas[result.idCorrida]?.nome}
               </TableCell>
@@ -116,6 +136,15 @@ export default function PagePilotoDetail({
                 {result.melhorVolta}
               </TableCell>
               <TableCell className="text-center">{result.posicao}</TableCell>
+              <TableCell className="text-center">
+                {result.posicaoQualificacao}
+              </TableCell>
+              <TableCell className="text-center">
+                {result.tempoQualificacao}
+              </TableCell>
+              <TableCell className="text-center">
+                {result.velocidadeMedia}
+              </TableCell>
               <TableCell className="text-center">{result.pontos}</TableCell>
             </TableRow>
           ))}

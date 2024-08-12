@@ -126,7 +126,9 @@ export default function PageCorridaDetail({
                 <TableCell className="text-center">
                   {result.numeroDaMelhorVolta}
                 </TableCell>
-                <TableCell className="text-center">
+                <TableCell
+                  className={`text-center ${result.isMelhorVoltaCorrida ? 'text-green-500' : ''}`}
+                >
                   {result.melhorVolta}
                 </TableCell>
                 <TableCell className="text-center">

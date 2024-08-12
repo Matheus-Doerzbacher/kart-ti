@@ -208,7 +208,9 @@ export default function Page() {
                     <TableCell className="text-center">
                       {resultado.numeroDaMelhorVolta}
                     </TableCell>
-                    <TableCell className="text-center">
+                    <TableCell
+                      className={`text-center ${resultado.isMelhorVoltaCorrida ? 'text-green-500' : ''}`}
+                    >
                       {resultado.melhorVolta}
                     </TableCell>
                     <TableCell className="text-center">

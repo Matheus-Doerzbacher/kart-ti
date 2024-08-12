@@ -24,7 +24,7 @@ import { Button } from '@/components/ui/button'
 import { toast } from '@/components/ui/use-toast'
 import {
   addResultadoPiloto,
-  getPontos,
+  getPontosByPosicao,
   ResultadoPiloto,
   updateResultadoPiloto,
 } from '@/services/resultadoPiloto'
@@ -37,6 +37,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { mask } from 'remask'
+import { Checkbox } from '@/components/ui/checkbox'
 
 const formSchema = z.object({
   idPiloto: z.string({
@@ -72,6 +73,7 @@ const formSchema = z.object({
   tempoQualificacao: z.string({
     required_error: 'Digite o tempo de qualificação',
   }),
+  isMelhorVoltaCorrida: z.boolean().optional(),
 })
 
 export const SheetFormResultado = ({
@@ -115,6 +117,7 @@ export const SheetFormResultado = ({
           numeroKart: defaultValue.numeroKart,
           posicaoQualificacao: defaultValue.posicaoQualificacao,
           tempoQualificacao: defaultValue.tempoQualificacao,
+          isMelhorVoltaCorrida: defaultValue.isMelhorVoltaCorrida,
         }
       : {},
   })
@@ -133,6 +136,7 @@ export const SheetFormResultado = ({
         numeroKart: defaultValue.numeroKart,
         posicaoQualificacao: defaultValue.posicaoQualificacao,
         tempoQualificacao: defaultValue.tempoQualificacao,
+        isMelhorVoltaCorrida: defaultValue.isMelhorVoltaCorrida,
       })
     } else {
       form.reset({
@@ -147,6 +151,7 @@ export const SheetFormResultado = ({
         numeroKart: 0,
         posicaoQualificacao: 0,
         tempoQualificacao: '',
+        isMelhorVoltaCorrida: false,
       })
     }
   }, [defaultValue, form])
@@ -158,7 +163,7 @@ export const SheetFormResultado = ({
         idPiloto: data.idPiloto,
         idCorrida,
         posicao: data.posicao,
-        pontos: getPontos(data.posicao),
+        pontos: getPontosByPosicao(data.posicao),
         melhorVolta: data.melhorVolta,
         numeroDaMelhorVolta: data.numeroDaMelhorVolta,
         tempoDoPilotoDaFrente: data.tempoDoPilotoDaFrente,
@@ -168,6 +173,7 @@ export const SheetFormResultado = ({
         numeroKart: data.numeroKart,
         posicaoQualificacao: data.posicaoQualificacao,
         tempoQualificacao: data.tempoQualificacao,
+        isMelhorVoltaCorrida: data.isMelhorVoltaCorrida || false,
       }
 
       console.log(novoResultado)
@@ -418,6 +424,22 @@ export const SheetFormResultado = ({
                 )}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="isMelhorVoltaCorrida"
+              render={({ field }) => (
+                <FormItem className="space-x-2">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel>Melhor Volta da Corrida</FormLabel>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <Button type="submit" className="w-full">
               Salvar
             </Button>
