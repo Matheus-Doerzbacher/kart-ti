@@ -1,3 +1,4 @@
+'use client'
 import {
   Table,
   TableHeader,
@@ -10,26 +11,22 @@ import { Corrida, getCorrida } from '@/services/corrida'
 import { getPiloto, Piloto } from '@/services/piloto'
 import { getPista } from '@/services/pista'
 import {
-  getAllResultadoPilotosByPiloto,
+  getAllResultadoPilotosByPilotoAndTemporada,
   ResultadoPiloto,
 } from '@/services/resultadoPiloto'
 import {
   getTemporadaPilotoByPilotoAndTemporada,
   TemporadaPiloto,
 } from '@/services/temporadaPiloto'
+import { useParams, useSearchParams, useRouter } from 'next/navigation'
+
 import { useEffect, useState } from 'react'
 
-export default function PagePilotoDetail({
-  idPiloto,
-  idTemporada,
-  setIdCorrida,
-  setSelectedOption,
-}: {
-  idPiloto: string
-  idTemporada: string
-  setIdCorrida: (idCorrida: string) => void
-  setSelectedOption: (selectedOption: string) => void
-}) {
+export default function Page() {
+  const router = useRouter()
+  const { idPiloto } = useParams()
+  const idTemporada = useSearchParams().get('idTemporada')
+
   const [resultadosPiloto, setResultadosPiloto] = useState<ResultadoPiloto[]>(
     [],
   )
@@ -39,17 +36,23 @@ export default function PagePilotoDetail({
 
   useEffect(() => {
     const buscarResultadosPiloto = async () => {
-      const resultados = await getAllResultadoPilotosByPiloto(idPiloto)
-      setResultadosPiloto(resultados)
+      if (idPiloto) {
+        const resultados = await getAllResultadoPilotosByPilotoAndTemporada(
+          idPiloto as string,
+          idTemporada as string,
+        )
+        setResultadosPiloto(resultados)
 
-      const pilotoData = await getPiloto(idPiloto)
-      setPiloto(pilotoData)
+        const pilotoData = await getPiloto(idPiloto as string)
+        setPiloto(pilotoData)
 
-      const temporadaPilotoData = await getTemporadaPilotoByPilotoAndTemporada(
-        idPiloto,
-        idTemporada,
-      )
-      setTemporadaPiloto(temporadaPilotoData!)
+        const temporadaPilotoData =
+          await getTemporadaPilotoByPilotoAndTemporada(
+            idPiloto as string,
+            idTemporada as string,
+          )
+        setTemporadaPiloto(temporadaPilotoData!)
+      }
     }
     buscarResultadosPiloto()
   }, [idPiloto, idTemporada])
@@ -129,8 +132,9 @@ export default function PagePilotoDetail({
                 key={index}
                 className="hover:bg-secondary cursor-pointer"
                 onClick={() => {
-                  setIdCorrida(result.idCorrida)
-                  setSelectedOption('corridas')
+                  router.push(
+                    `/resultados/corridas/${result.idCorrida}?idTemporada=${idTemporada}`,
+                  )
                 }}
               >
                 <TableCell className="text-center">

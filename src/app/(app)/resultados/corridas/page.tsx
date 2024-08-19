@@ -1,4 +1,8 @@
 'use client'
+import { Corrida, getCorridasPorTemporada } from '@/services/corrida'
+import { getTemporadaAtual } from '@/services/temporada'
+import { useEffect, useState } from 'react'
+
 import {
   Table,
   TableHeader,
@@ -7,19 +11,17 @@ import {
   TableBody,
   TableCell,
 } from '@/components/ui/table'
-import { Corrida, getCorridasPorTemporada } from '@/services/corrida'
+
 import { getPiloto } from '@/services/piloto'
 import { getPista } from '@/services/pista'
-import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function PageCorridas({
-  idTemporada,
-  setIdCorrida,
-}: {
-  idTemporada: string
-  setIdCorrida: React.Dispatch<React.SetStateAction<string>>
-}) {
+export default function PageCorridas() {
+  const idTemporada = useSearchParams().get('idTemporada')
+  const [temporada, setTemporada] = useState<string>()
+  const router = useRouter()
   const [corridas, setCorridas] = useState<Corrida[]>([])
+
   const [pistas, setPistas] = useState<{ [key: string]: string }>({})
   const [pilotosGanhadores, setPilotosGanhadores] = useState<{
     [key: string]: string
@@ -27,8 +29,12 @@ export default function PageCorridas({
 
   useEffect(() => {
     const buscarCorridas = async () => {
-      const data: Corrida[] = await getCorridasPorTemporada(idTemporada)
+      const idTemporadaData = idTemporada ?? (await getTemporadaAtual()).id
+      const data: Corrida[] = await getCorridasPorTemporada(
+        idTemporadaData as string,
+      )
       setCorridas(data)
+      setTemporada(idTemporadaData)
     }
     buscarCorridas()
   }, [idTemporada])
@@ -95,7 +101,11 @@ export default function PageCorridas({
               <TableRow
                 key={index}
                 className="hover:bg-secondary cursor-pointer"
-                onClick={() => setIdCorrida(corrida.id)}
+                onClick={() =>
+                  router.push(
+                    `/resultados/corridas/${corrida.id}?idTemporada=${temporada}`,
+                  )
+                }
               >
                 <TableCell>{pistas[corrida.idPista]}</TableCell>
                 <TableCell>

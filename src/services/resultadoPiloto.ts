@@ -11,7 +11,7 @@ import {
   where,
 } from 'firebase/firestore'
 import { recalcularTemporadaPiloto } from './temporadaPiloto'
-import { atualizarGanhadorCorrida } from './corrida'
+import { atualizarGanhadorCorrida, getCorridasPorTemporada } from './corrida'
 
 export type ResultadoPiloto = {
   id: string
@@ -69,12 +69,19 @@ export const getAllResultadoPilotosByIdCorrida = async (
   return resultados
 }
 
-export const getAllResultadoPilotosByPiloto = async (
+export const getAllResultadoPilotosByPilotoAndTemporada = async (
   idPiloto: string,
+  idTemporada: string,
 ): Promise<ResultadoPiloto[]> => {
+  const corridas = await getCorridasPorTemporada(idTemporada)
+  const idsCorridas = corridas.map((corrida) => corrida.id)
+
   const resultadoCollection = collection(db, nameCollection)
-  const q = query(resultadoCollection, where('idPiloto', '==', idPiloto))
-  const resultadoSnapshot = await getDocs(q)
+  const resultadosquerry = query(
+    resultadoCollection,
+    where('idPiloto', '==', idPiloto),
+  )
+  const resultadoSnapshot = await getDocs(resultadosquerry)
   const resultados = resultadoSnapshot.docs.map(
     (doc) =>
       ({
@@ -82,7 +89,14 @@ export const getAllResultadoPilotosByPiloto = async (
         id: doc.id,
       }) as ResultadoPiloto,
   )
-  return resultados
+
+  const results: ResultadoPiloto[] = []
+  resultados.forEach((resultado) => {
+    if (idsCorridas.includes(resultado.idCorrida)) {
+      results.push(resultado)
+    }
+  })
+  return results
 }
 
 export const getResultadoPiloto = async (

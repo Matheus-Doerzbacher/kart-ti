@@ -1,34 +1,34 @@
 'use client'
+
 import {
   Table,
-  TableHeader,
-  TableRow,
-  TableHead,
   TableBody,
   TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table'
 import { getPiloto } from '@/services/piloto'
+import { getTemporadaAtual } from '@/services/temporada'
 import {
   getAllTempordaPilotoByTemporada,
   TemporadaPiloto,
 } from '@/services/temporadaPiloto'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-export default function PagePilotosRanking({
-  idTemporada,
-  setIdPiloto,
-}: {
-  idTemporada: string
-  setIdPiloto: React.Dispatch<React.SetStateAction<string>>
-}) {
+export default function Page() {
+  const idTemporada = useSearchParams().get('idTemporada')
   const [temporadaPilotos, setTemporadaPilotos] = useState<TemporadaPiloto[]>(
     [],
   )
   const [pilotos, setPilotos] = useState<{ [key: string]: string }>({})
+  const router = useRouter()
 
   useEffect(() => {
     const fetchTemporadaPilotos = async () => {
-      const data = await getAllTempordaPilotoByTemporada(idTemporada)
+      const idTemporadaData = idTemporada ?? (await getTemporadaAtual()).id
+      const data = await getAllTempordaPilotoByTemporada(idTemporadaData)
       setTemporadaPilotos(data)
     }
     fetchTemporadaPilotos()
@@ -76,7 +76,11 @@ export default function PagePilotosRanking({
               <TableRow
                 key={index}
                 className="hover:bg-secondary cursor-pointer"
-                onClick={() => setIdPiloto(piloto.idPiloto)}
+                onClick={() =>
+                  router.push(
+                    `/resultados/pilotos/${piloto.idPiloto}?idTemporada=${idTemporada}`,
+                  )
+                }
               >
                 <TableCell className="text-center">{index + 1}</TableCell>
                 <TableCell>{pilotos[piloto.idPiloto]}</TableCell>

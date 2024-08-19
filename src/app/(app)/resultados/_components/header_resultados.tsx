@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect } from 'react'
-import PageCorridas from './_components/page_corridas'
 import {
   Select,
   SelectContent,
@@ -8,9 +7,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import PageCorridaDetail from './_components/page_corrida_detail'
-import PagePilotosRanking from './_components/page_pilotos_ranking'
-import PagePilotoDetail from './_components/page_piloto_detail'
 import {
   getAllTemporada,
   getTemporadaAtual,
@@ -19,16 +15,24 @@ import {
 import { getAllPiloto, Piloto } from '@/services/piloto'
 import { Corrida, getCorridasPorTemporada } from '@/services/corrida'
 import { getPista } from '@/services/pista'
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation'
 
-export default function Page() {
-  // const { userSession, setUserSession } = useUserSession()
+export function HeaderResultados() {
+  const { idCorrida, idPiloto } = useParams()
+  const idTemporada = useSearchParams().get('idTemporada')
+  const pathname = usePathname()
+  const router = useRouter()
+
   const [temporadasSelect, setTemporadasSelect] = useState<Temporada[]>([])
   const [pilotosSelect, setPilotosSelect] = useState<Piloto[]>([])
   const [corridasSelect, setCorridasSelect] = useState<Corrida[]>([])
 
-  const [idTemporada, setIdTemporada] = useState<string>('')
-  const [idPiloto, setIdPiloto] = useState<string>('todos')
-  const [idCorrida, setIdCorrida] = useState<string>('todas')
+  const [temporadaSelecionada, setTemporadaSelecionada] = useState<string>('')
 
   const [selectedOption, setSelectedOption] = useState('corridas')
 
@@ -39,12 +43,18 @@ export default function Page() {
       const temporadas = await getAllTemporada()
       setTemporadasSelect(temporadas)
 
-      const temporadaAtual = await getTemporadaAtual()
-      setIdTemporada(temporadaAtual.id)
+      const idTemporadaData = idTemporada ?? (await getTemporadaAtual()).id
+      setTemporadaSelecionada(idTemporadaData as string)
     }
     buscarTemporadas()
+
+    if (pathname === '/resultados/corridas') {
+      setSelectedOption('corridas')
+    } else if (pathname === '/resultados/pilotos') {
+      setSelectedOption('pilotos')
+    }
     setIsLoading(false)
-  }, [])
+  }, [idTemporada, pathname])
 
   useEffect(() => {
     const buscarPilotos = async () => {
@@ -56,8 +66,9 @@ export default function Page() {
 
   useEffect(() => {
     const atualizarCorridas = async () => {
-      if (idTemporada) {
-        const data: Corrida[] = await getCorridasPorTemporada(idTemporada)
+      if (temporadaSelecionada) {
+        const data: Corrida[] =
+          await getCorridasPorTemporada(temporadaSelecionada)
 
         const dataCorrida = await Promise.all(
           data.map(async (corrida: Corrida) => ({
@@ -70,7 +81,7 @@ export default function Page() {
       }
     }
     atualizarCorridas()
-  }, [idTemporada])
+  }, [temporadaSelecionada])
 
   if (isLoading) {
     return (
@@ -81,11 +92,15 @@ export default function Page() {
   }
 
   return (
-    <main className="flex-1 py-8 px-6">
+    <header className="w-full py-8 px-6">
       <div className="flex items-center m-4 gap-4">
+        {/* SELECT TEMPORADA */}
         <Select
-          value={idTemporada}
-          onValueChange={(value) => setIdTemporada(value)}
+          value={temporadaSelecionada}
+          onValueChange={(value) => {
+            setTemporadaSelecionada(value)
+            router.push(`/resultados/corridas?idTemporada=${value}`)
+          }}
           disabled={isLoading}
         >
           <SelectTrigger>
@@ -95,18 +110,25 @@ export default function Page() {
             {temporadasSelect.map((temporada) => (
               <SelectItem key={temporada.id} value={temporada.id}>
                 {temporada.nome}
+                {'  '}
+                {temporada.atual && '(atual)'}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
+        {/* SELECT OPÇÃO */}
         <Select
           value={selectedOption}
           onValueChange={(value) => {
             setSelectedOption(value)
             if (value === 'pilotos') {
-              setIdPiloto('todos')
+              router.push(
+                `/resultados/pilotos?idTemporada=${temporadaSelecionada}`,
+              )
             } else {
-              setIdCorrida('todas')
+              router.push(
+                `/resultados/corridas?idTemporada=${temporadaSelecionada}`,
+              )
             }
           }}
           disabled={isLoading}
@@ -122,13 +144,30 @@ export default function Page() {
             ))}
           </SelectContent>
         </Select>
+        {/* SELECT CORRIDA OU PILOTO */}
         <Select
-          value={selectedOption === 'corridas' ? idCorrida : idPiloto}
+          value={
+            selectedOption === 'corridas'
+              ? (idCorrida as string) || 'todas'
+              : (idPiloto as string) || 'todos'
+          }
           onValueChange={(value) => {
             if (selectedOption === 'corridas') {
-              setIdCorrida(value)
+              if (value === 'todas') {
+                router.push(`/resultados/corridas`)
+              } else {
+                router.push(
+                  `/resultados/corridas/${value}?idTemporada=${temporadaSelecionada}`,
+                )
+              }
             } else {
-              setIdPiloto(value)
+              if (value === 'todos') {
+                router.push(`/resultados/pilotos`)
+              } else {
+                router.push(
+                  `/resultados/pilotos/${value}?idTemporada=${temporadaSelecionada}`,
+                )
+              }
             }
           }}
           disabled={isLoading}
@@ -168,28 +207,6 @@ export default function Page() {
           </SelectContent>
         </Select>
       </div>
-      {idTemporada && selectedOption === 'corridas' && idCorrida === 'todas' ? (
-        <PageCorridas idTemporada={idTemporada} setIdCorrida={setIdCorrida} />
-      ) : idTemporada && selectedOption === 'corridas' ? (
-        <PageCorridaDetail
-          idCorrida={idCorrida}
-          setIdPiloto={setIdPiloto}
-          setSelectedOption={setSelectedOption}
-        />
-      ) : null}
-      {idTemporada && selectedOption === 'pilotos' && idPiloto === 'todos' ? (
-        <PagePilotosRanking
-          idTemporada={idTemporada}
-          setIdPiloto={setIdPiloto}
-        />
-      ) : idTemporada && selectedOption === 'pilotos' ? (
-        <PagePilotoDetail
-          idPiloto={idPiloto}
-          idTemporada={idTemporada}
-          setIdCorrida={setIdCorrida}
-          setSelectedOption={setSelectedOption}
-        />
-      ) : null}
-    </main>
+    </header>
   )
 }

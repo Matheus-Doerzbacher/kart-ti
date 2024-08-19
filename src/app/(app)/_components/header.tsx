@@ -46,11 +46,11 @@ export function HeaderCustom() {
             </HeaderLink>
           )}
           <HeaderLink
-            href="/corridas"
+            href="/resultados/corridas"
             prefetch={false}
-            isActive={isActive('corridas')}
+            isActive={isActive('resultados')}
           >
-            Corridas / Pilotos
+            Resultados
           </HeaderLink>
           <HeaderLink
             href="/classificacoes"

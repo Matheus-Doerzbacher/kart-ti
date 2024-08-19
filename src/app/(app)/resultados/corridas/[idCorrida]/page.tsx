@@ -15,17 +15,12 @@ import {
   getAllResultadoPilotosByIdCorrida,
   ResultadoPiloto,
 } from '@/services/resultadoPiloto'
+import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-export default function PageCorridaDetail({
-  idCorrida,
-  setIdPiloto,
-  setSelectedOption,
-}: {
-  idCorrida: string
-  setIdPiloto: (idCorrida: string) => void
-  setSelectedOption: (selectedOption: string) => void
-}) {
+export default function PageCorrida() {
+  const { idCorrida } = useParams()
+  const router = useRouter()
   const [corrida, setCorrida] = useState<Corrida | null>(null)
   const [resultadoPilotos, setResultadoPilotos] = useState<ResultadoPiloto[]>(
     [],
@@ -35,14 +30,15 @@ export default function PageCorridaDetail({
 
   useEffect(() => {
     const fetchCorrida = async () => {
-      const dataCorrida = await getCorrida(idCorrida)
+      const dataCorrida = await getCorrida(idCorrida as string)
       setCorrida(dataCorrida)
 
       const dataPista = await getPista(dataCorrida.idPista)
       setPista(dataPista)
 
-      const dataResultadoPilotos =
-        await getAllResultadoPilotosByIdCorrida(idCorrida)
+      const dataResultadoPilotos = await getAllResultadoPilotosByIdCorrida(
+        idCorrida as string,
+      )
       setResultadoPilotos(dataResultadoPilotos)
     }
     fetchCorrida()
@@ -127,10 +123,11 @@ export default function PageCorridaDetail({
                   {result.numeroKart}
                 </TableCell>
                 <TableCell
-                  onClick={() => {
-                    setIdPiloto(result.idPiloto)
-                    setSelectedOption('pilotos')
-                  }}
+                  onClick={() =>
+                    router.push(
+                      `/resultados/pilotos/${result.idPiloto}?idTemporada=${corrida?.idTemporada}`,
+                    )
+                  }
                   className="cursor-pointer"
                 >
                   {pilotos[result.idPiloto]}
