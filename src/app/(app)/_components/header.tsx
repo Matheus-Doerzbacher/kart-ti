@@ -6,6 +6,7 @@ import { HeaderLink } from './header_link'
 import { usePathname } from 'next/navigation'
 import { useUserSession } from '@/context/user_session_context'
 import Link from 'next/link'
+import Cookies from 'js-cookie'
 
 export function HeaderCustom() {
   const { userSession, setUserSession } = useUserSession()
@@ -71,6 +72,8 @@ export function HeaderCustom() {
               variant="outline"
               onClick={() => {
                 setUserSession(null)
+                Cookies.remove('userSession')
+                window.location.href = '/'
               }}
             >
               Sair
