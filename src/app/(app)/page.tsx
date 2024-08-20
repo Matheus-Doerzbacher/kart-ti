@@ -16,19 +16,29 @@ import {
 } from '@/components/ui/table'
 import { TableRowPiloto } from './_components/table_row_piloto'
 import { useEffect, useState } from 'react'
-import { getTemporadaAtual } from '@/services/temporada'
+import {
+  getTemporada,
+  getTemporadaAtual,
+  Temporada,
+} from '@/services/temporada'
 import {
   getAllTempordaPilotoByTemporada,
   TemporadaPiloto,
 } from '@/services/temporadaPiloto'
 import { Corrida, getCorridasPorTemporada } from '@/services/corrida'
 import { TableRowCorrida } from './_components/table_row_corrida'
+import { getPista, Pista } from '@/services/pista'
+
+interface CorridaCustom extends Corrida {
+  pista: Pista
+  temporada: Temporada
+}
 
 export default function Page() {
   const [temporadaPilotos, setTemporadaPilotos] = useState<TemporadaPiloto[]>(
     [],
   )
-  const [corridas, setCorridas] = useState<Corrida[]>([])
+  const [corridas, setCorridas] = useState<CorridaCustom[]>([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +49,19 @@ export default function Page() {
       setTemporadaPilotos(temporadaPilotos)
 
       const corridasData = await getCorridasPorTemporada(temporadaAtual.id)
-      setCorridas(corridasData)
+
+      const corridasCustom = await Promise.all(
+        corridasData.map(async (corrida) => {
+          const pista = await getPista(corrida.idPista)
+          const temporada = await getTemporada(corrida.idTemporada)
+          return {
+            ...corrida,
+            pista,
+            temporada,
+          }
+        }),
+      )
+      setCorridas(corridasCustom)
     }
     fetchData()
   }, [])
@@ -52,7 +74,7 @@ export default function Page() {
             Corridas Recentes
           </h2>
           <Link
-            href="/corridas"
+            href="/resultados/corridas"
             className="text-primary hover:text-primary-hover"
             prefetch={false}
           >
@@ -63,8 +85,14 @@ export default function Page() {
           {corridas.map((corrida) => (
             <Card key={corrida.id}>
               <CardHeader>
-                <CardTitle>Corrida na Pista de Corrida</CardTitle>
-                <CardDescription>15 de Junho de 2024</CardDescription>
+                <CardTitle>Corrida na Pista {corrida.pista.nome}</CardTitle>
+                <CardDescription>
+                  {corrida.data.toDate().toLocaleDateString('pt-BR', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                  })}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Table>
