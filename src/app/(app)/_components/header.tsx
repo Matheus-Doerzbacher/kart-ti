@@ -38,8 +38,6 @@ export function HeaderCustom() {
     return pathname.includes(name)
   }
 
-  console.log(pathname)
-
   return (
     <header className="bg-card py-4 px-6 shadow flex items-center h-20">
       <nav className="flex items-center justify-between w-full">
