@@ -1,6 +1,10 @@
 'use client'
 import { Corrida, getCorridasPorTemporada } from '@/services/corrida'
-import { getTemporadaAtual } from '@/services/temporada'
+import {
+  getTemporada,
+  getTemporadaAtual,
+  Temporada,
+} from '@/services/temporada'
 import { useEffect, useState } from 'react'
 
 import {
@@ -12,66 +16,44 @@ import {
   TableCell,
 } from '@/components/ui/table'
 
-import { getPiloto } from '@/services/piloto'
-import { getPista } from '@/services/pista'
+import { getPiloto, Piloto } from '@/services/piloto'
+import { getPista, Pista } from '@/services/pista'
 import { useRouter, useSearchParams } from 'next/navigation'
+
+interface CorridasCustom extends Corrida {
+  pista: Pista
+  piloto: Piloto
+  temporada: Temporada
+}
 
 export default function PageCorridas() {
   const idTemporada = useSearchParams().get('idTemporada')
   const [temporada, setTemporada] = useState<string>()
   const router = useRouter()
-  const [corridas, setCorridas] = useState<Corrida[]>([])
-
-  const [pistas, setPistas] = useState<{ [key: string]: string }>({})
-  const [pilotosGanhadores, setPilotosGanhadores] = useState<{
-    [key: string]: string
-  }>({})
+  const [corridas, setCorridas] = useState<CorridasCustom[]>([])
 
   useEffect(() => {
     const buscarCorridas = async () => {
       const idTemporadaData = idTemporada ?? (await getTemporadaAtual()).id
-      const data: Corrida[] = await getCorridasPorTemporada(
+
+      const corridasData: Corrida[] = await getCorridasPorTemporada(
         idTemporadaData as string,
       )
-      setCorridas(data)
+
+      const corridasCustom: CorridasCustom[] = await Promise.all(
+        corridasData.map(async (corrida) => {
+          const pista = await getPista(corrida.idPista)
+          const piloto = await getPiloto(corrida.idPiloto || '')
+          const temporada = await getTemporada(corrida.idTemporada)
+          return { ...corrida, pista, piloto, temporada }
+        }),
+      )
+
+      setCorridas(corridasCustom)
       setTemporada(idTemporadaData)
     }
     buscarCorridas()
   }, [idTemporada])
-
-  useEffect(() => {
-    const fetchPistas = async () => {
-      const pistasData: { [key: string]: string } = {}
-      if (corridas) {
-        for (const corrida of corridas) {
-          const pista = await getPista(corrida.idPista)
-          pistasData[pista.id] = pista.nome
-        }
-      }
-      setPistas(pistasData)
-    }
-
-    if (corridas && corridas.length > 0) {
-      fetchPistas()
-    }
-  }, [corridas])
-
-  useEffect(() => {
-    const fetchPilotos = async () => {
-      const pilotosGanhadoresData: { [key: string]: string } = {}
-      if (corridas) {
-        for (const corrida of corridas) {
-          const piloto = await getPiloto(corrida.idPiloto || '')
-          pilotosGanhadoresData[piloto.id] = piloto.nome
-        }
-      }
-      setPilotosGanhadores(pilotosGanhadoresData)
-    }
-
-    if (corridas && corridas.length > 0) {
-      fetchPilotos()
-    }
-  }, [corridas])
 
   return (
     <main className="flex-1 py-8 px-6">
@@ -79,11 +61,13 @@ export default function PageCorridas() {
       <Table>
         <TableHeader>
           <TableRow className="bg-primary hover:bg-primary/80">
-            <TableHead className="text-primary-foreground rounded-tl-lg">
+            <TableHead className="text-primary-foreground rounded-tl-lg min-w-24">
               Pista
             </TableHead>
             <TableHead className="text-primary-foreground">Data</TableHead>
-            <TableHead className="text-primary-foreground">Ganhador</TableHead>
+            <TableHead className="text-primary-foreground min-w-44">
+              Ganhador
+            </TableHead>
             <TableHead className="text-primary-foreground">Voltas</TableHead>
             <TableHead className="text-primary-foreground rounded-tr-lg">
               Tempo
@@ -107,12 +91,12 @@ export default function PageCorridas() {
                   )
                 }
               >
-                <TableCell>{pistas[corrida.idPista]}</TableCell>
+                <TableCell>{corrida.pista.nome}</TableCell>
                 <TableCell>
                   {corrida.data.toDate().toLocaleDateString()}
                 </TableCell>
                 <TableCell>
-                  {pilotosGanhadores[corrida.idPiloto || '']}
+                  {corrida.piloto?.nome?.split(' ').slice(0, 2).join(' ')}
                 </TableCell>
                 <TableCell className="pl-5">{corrida.voltas}</TableCell>
                 <TableCell>{corrida.tempo}</TableCell>
