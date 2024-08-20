@@ -92,8 +92,8 @@ export function HeaderResultados() {
   }
 
   return (
-    <header className="w-full py-8 px-6">
-      <div className="flex items-center m-4 gap-4">
+    <header className="w-full pt-8 px-6">
+      <div className="flex md:flex-row flex-col items-center m-4 gap-4">
         {/* SELECT TEMPORADA */}
         <Select
           value={temporadaSelecionada}
